@@ -10,7 +10,7 @@ i think set up some kind of app is much simpler then maintain it, add new featur
 so i will try to do it... try to imagine that we do not have any on-line shop (we have back to 90` :D ) and we want to create one.  
 first with very basic features to allow to connection some sellers and buyers. will try to do this as POC - so some quick way to deliver something.
 then i will try to refactor it to good quality code. not sure want this exactly mean...  
-but for now i know that most challenging part will is developing app witch is running on production, and i want to try to simulate it.
+but for now i know that most challenging part is developing app witch is running on production, and i want to try to simulate it.
 
 ## loose thoughts and ideas
 * road map
@@ -18,4 +18,3 @@ but for now i know that most challenging part will is developing app witch is ru
 * kubernetes
 * some cloud provider (aws, gcp, azure)
 * maybe one microservice in other language (python, nodejs, rust)
-* 
