@@ -1,0 +1,22 @@
+version: '3.3'
+
+networks:
+  market-dev:
+    ipam:
+      config:
+        - subnet: 172.200.0.0/24
+
+services:
+  market-mongodb:
+    container_name: market-dev-mongodb
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    networks:
+      market-dev:
+        ipv4_address: 172.200.0.10
+    ports:
+      - "27017:27017"
+    volumes:
+        - ~/apps/mongo:/data/db
