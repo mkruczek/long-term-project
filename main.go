@@ -25,6 +25,11 @@ func main() {
 
 	http.HandleFunc("/api/health", health)
 
+	http.HandleFunc("/api/getproducts", GetProducts)
+	http.HandleFunc("/api/getproduct/", GetProduct)
+	http.HandleFunc("/api/createproduct", CreateProduct)
+	http.HandleFunc("/api/updateproduct/", UpdateProduct)
+
 	fmt.Println("starting server on port 8090")
 	if err := http.ListenAndServe(":8090", nil); err != nil {
 		panic(fmt.Sprintf("unable to start server: %v", err))
@@ -37,7 +42,7 @@ func init() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var err error
-	mongoClient, err = mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
+	mongoClient, err = mongo.Connect(ctx, options.Client().ApplyURI("mongodb://root:secret@localhost:27017"))
 	if err != nil {
 		panic(fmt.Sprintf("unable to connect to mongodb: %v", err))
 	}
