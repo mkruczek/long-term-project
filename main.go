@@ -35,6 +35,11 @@ func main() {
 	http.HandleFunc("/api/createuser", CreateUser)
 	http.HandleFunc("/api/updateuser/", UpdateUser)
 
+	http.HandleFunc("/api/getorders", GetOrders)
+	http.HandleFunc("/api/getorder/", GetOrder)
+	http.HandleFunc("/api/createorder", CreateOrder)
+	http.HandleFunc("/api/updateorder/", UpdateOrder)
+
 	fmt.Println("starting server on port 8090")
 	if err := http.ListenAndServe(":8090", nil); err != nil {
 		panic(fmt.Sprintf("unable to start server: %v", err))
@@ -42,8 +47,6 @@ func main() {
 }
 
 func init() {
-
-	//connect to mongodb
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var err error
