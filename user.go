@@ -13,8 +13,6 @@ type User struct {
 	Email    string `json:"email"`
 }
 
-//http handler with mongo CRUD for user
-
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	cursor, err := mongoClient.Database("users").Collection("users").Find(context.Background(), bson.D{})
 	if err != nil {
