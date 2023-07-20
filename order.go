@@ -77,3 +77,16 @@ func UpdateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func DeleteOrder(w http.ResponseWriter, r *http.Request) {
+	orderID := r.URL.Path[len("/api/deleteorder/"):]
+
+	query := bson.D{{"orderid", orderID}}
+	if _, err := mongoClient.Database("market").Collection("order").DeleteOne(context.Background(), query); err != nil {
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(orderID); err != nil {
+		return
+	}
+}

@@ -78,3 +78,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	userID := r.URL.Path[len("/api/deleteuser/"):]
+
+	query := bson.D{{"userid", userID}}
+	deleted, err := mongoClient.Database("market").Collection("users").DeleteOne(context.Background(), query)
+	if err != nil {
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(deleted); err != nil {
+		return
+	}
+}

@@ -77,3 +77,17 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	productID := r.URL.Path[len("/api/deleteproduct/"):]
+
+	query := bson.D{{"productid", productID}}
+	deleted, err := mongoClient.Database("market").Collection("products").DeleteOne(context.Background(), query)
+	if err != nil {
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(deleted); err != nil {
+		return
+	}
+}

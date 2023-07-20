@@ -29,16 +29,19 @@ func main() {
 	http.HandleFunc("/api/getproduct/", GetProduct)
 	http.HandleFunc("/api/createproduct", CreateProduct)
 	http.HandleFunc("/api/updateproduct/", UpdateProduct)
+	http.HandleFunc("/api/deleteproduct/", DeleteProduct)
 
 	http.HandleFunc("/api/getusers", GetUsers)
 	http.HandleFunc("/api/getuser/", GetUser)
 	http.HandleFunc("/api/createuser", CreateUser)
 	http.HandleFunc("/api/updateuser/", UpdateUser)
+	http.HandleFunc("/api/deleteuser/", DeleteUser)
 
 	http.HandleFunc("/api/getorders", GetOrders)
 	http.HandleFunc("/api/getorder/", GetOrder)
 	http.HandleFunc("/api/createorder", CreateOrder)
 	http.HandleFunc("/api/updateorder/", UpdateOrder)
+	http.HandleFunc("/api/deleteorder/", DeleteOrder)
 
 	fmt.Println("starting server on port 8090")
 	if err := http.ListenAndServe(":8090", nil); err != nil {
