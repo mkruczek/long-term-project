@@ -14,7 +14,7 @@ type User struct {
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	cursor, err := mongoClient.Database("users").Collection("users").Find(context.Background(), bson.D{})
+	cursor, err := mongoClient.Database("market").Collection("users").Find(context.Background(), bson.D{})
 	if err != nil {
 		return
 	}
@@ -34,7 +34,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	var user User
 	query := bson.D{{"userid", userID}}
-	if err := mongoClient.Database("users").Collection("users").FindOne(context.Background(), query).Decode(&user); err != nil {
+	if err := mongoClient.Database("market").Collection("users").FindOne(context.Background(), query).Decode(&user); err != nil {
 		return
 	}
 
@@ -49,7 +49,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	created, err := mongoClient.Database("users").Collection("users").InsertOne(context.Background(), user)
+	created, err := mongoClient.Database("market").Collection("users").InsertOne(context.Background(), user)
 	if err != nil {
 		return
 	}
@@ -69,7 +69,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	query := bson.D{{"userid", userID}}
 	update := bson.D{{"$set", bson.D{{"username", user.Username}, {"email", user.Email}}}}
-	updated, err := mongoClient.Database("users").Collection("users").UpdateOne(context.Background(), query, update)
+	updated, err := mongoClient.Database("market").Collection("users").UpdateOne(context.Background(), query, update)
 	if err != nil {
 		return
 	}
