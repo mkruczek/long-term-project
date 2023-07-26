@@ -43,6 +43,12 @@ func main() {
 	http.HandleFunc("/api/updateorder/", UpdateOrder)
 	http.HandleFunc("/api/deleteorder/", DeleteOrder)
 
+	http.HandleFunc("/api/getoffers", GetOffers)
+	http.HandleFunc("/api/getoffer/", GetOffer)
+	http.HandleFunc("/api/createoffer", CreateOffer)
+	http.HandleFunc("/api/updateoffer/", UpdateOffer)
+	http.HandleFunc("/api/deleteoffer/", DeleteOffer)
+
 	fmt.Println("starting server on port 8090")
 	if err := http.ListenAndServe(":8090", nil); err != nil {
 		panic(fmt.Sprintf("unable to start server: %v", err))
