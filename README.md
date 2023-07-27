@@ -1,6 +1,17 @@
 # long-term-project
 
+## 2023-07-27
+inspired by this video:
+https://www.youtube.com/watch?v=VTCP8RzBx6w
+I decided to change the scope of the project to an application in which I will be able to monitor my trading on the forex market.
+
+
 ## project description
+//todo
+
+
+
+## 2021-07-10
 **TL,DR:**   
 i am starting with POC (very messy code) and then i will refactor it to good quality code(hopefully).
 
