@@ -3,13 +3,21 @@
 ## 2023-07-27
 inspired by this video:
 https://www.youtube.com/watch?v=VTCP8RzBx6w
-I decided to change the scope of the project to an application in which I will be able to monitor my trading on the forex market.
+I decided to change the scope of the project to an application in which I will be able to monitor my trading on the forex market.  
+**Little History:**  
+Becoming a professional trader is my unfulfilled dream. I had a few opportunities to do it professionally, but my results never allowed me to make a living out of it.
+## new project description
+so as my history is as is, and Piotrak at movie said that we should do something that we like, i decided to do something that i like.
+i would like to have some tool that will help me to monitor my trading on forex market, yes i still trade, but only for fun with very small amount of money.
+other thing is that i not what start with POC with bad code, i want start with "kind of" good code (apply my current knowledge) and simulate normal development process with new features, refactoring, etc.
+It turned out that writing poor quality code intentionally is difficult and can be very easy to bend, for example, using only http get :D
 
-
-## project description
-//todo
-
-
+## loose thoughts and ideas
+* road map
+* trunk base development with feature flags and somehow simulate parallel development
+* kubernetes
+* some cloud provider (aws, gcp, azure)
+* maybe one microservice in other language (python, nodejs, rust)
 
 ## 2021-07-10
 **TL,DR:**   
@@ -23,9 +31,3 @@ first with very basic features to allow to connection some sellers and buyers. w
 then i will try to refactor it to good quality code. not sure want this exactly mean...  
 but for now i know that most challenging part is developing app witch is running on production, and i want to try to simulate it.
 
-## loose thoughts and ideas
-* road map
-* trunk base development with feature flags and somehow simulate parallel development
-* kubernetes
-* some cloud provider (aws, gcp, azure)
-* maybe one microservice in other language (python, nodejs, rust)
