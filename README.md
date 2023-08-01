@@ -12,6 +12,16 @@ i would like to have some tool that will help me to monitor my trading on forex 
 other thing is that i not what start with POC with bad code, i want start with "kind of" good code (apply my current knowledge) and simulate normal development process with new features, refactoring, etc.
 It turned out that writing poor quality code intentionally is difficult and can be very easy to bend, for example, using only http get :D
 
+### First Epic
+As a trader i would like to take csv from  my broker and import it to my app, so i can see my trades in my app. Want to be able see some basic statistics like:
+* how many trades i have
+* how many trades i won and lost
+* what is my win ratio
+* what is my average win and average lost in pips
+* what instrument i trade and what is my win ratio for each instrument
+* time of day when i trade and what is my win ratio for each time of day
+
+
 ## loose thoughts and ideas
 * road map
 * trunk base development with feature flags and somehow simulate parallel development
