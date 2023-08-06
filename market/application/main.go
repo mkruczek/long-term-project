@@ -2,41 +2,33 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"net/http"
-	"time"
+	"market/market/infrastructure/baseServer"
+	"market/market/infrastructure/healthReady"
+	"market/market/infrastructure/log"
+	"market/market/infrastructure/mongo"
 )
-
-var mongoClient *mongo.Client
-
-func health(w http.ResponseWriter, req *http.Request) {
-
-	if err := mongoClient.Ping(context.Background(), nil); err != nil {
-		http.Error(w, "unable to ping mongodb", http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprintf(w, "i am alive\n")
-}
 
 func main() {
 
-	http.HandleFunc("/api/health", health)
+	ctx := context.Background()
 
-	fmt.Println("starting server on port 8090")
-	if err := http.ListenAndServe(":8090", nil); err != nil {
-		panic(fmt.Sprintf("unable to start server: %v", err))
-	}
-}
+	log.Init("info")
 
-func init() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	var err error
-	mongoClient, err = mongo.Connect(ctx, options.Client().ApplyURI("mongodb://root:secret@localhost:27017"))
+	//todo add config
+	bs := baseServer.New("/api/market/", "8090")
+
+	db, err := mongo.New(ctx, "market", "172.200.0.10", "27017", "root", "secret")
 	if err != nil {
-		panic(fmt.Sprintf("unable to connect to mongodb: %v", err))
+		log.Fatalf(ctx, "can`t connect to mongo: %s", err)
+	}
+
+	bs.RegisterHealthReady(healthReady.New(
+		healthReady.Observer{
+			ServiceContextName: "database",
+			Service:            db,
+		}))
+
+	if err := bs.ListenAndServe(ctx); err != nil {
+		log.Fatalf(ctx, "can`t start api server: %s", err)
 	}
 }
