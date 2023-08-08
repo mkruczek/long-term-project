@@ -11,26 +11,26 @@ type healthReady interface {
 	Ready(ctx context.Context) map[string]error
 }
 
-type server struct {
+type Server struct {
 	svr         *gin.Engine
 	Port        string
 	UrlPath     string
 	HealthReady healthReady
 }
 
-func New(urlPath, port string) server {
-	return server{
+func New(urlPath, port string) Server {
+	return Server{
 		svr:     gin.New(),
 		UrlPath: urlPath,
 		Port:    port,
 	}
 }
 
-func (bs *server) ListenAndServe(ctx context.Context) error {
+func (bs *Server) ListenAndServe(ctx context.Context) error {
 	return bs.svr.Run(fmt.Sprintf(":%s", bs.Port))
 }
 
-func (bs *server) RegisterHealthReady(hr healthReady) {
+func (bs *Server) RegisterHealthReady(hr healthReady) {
 	bs.HealthReady = hr
 
 	bs.svr.GET(fmt.Sprintf("%s/health", bs.UrlPath), health(bs.HealthReady))
