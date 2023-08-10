@@ -7,7 +7,7 @@ type Server struct {
 }
 
 // todo add config
-func NewServer(config Config) Server {
+func New(config Config) Server {
 	return Server{
 		bs: baseServer.New(config.UrlPath, config.Port),
 	}

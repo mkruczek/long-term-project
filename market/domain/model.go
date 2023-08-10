@@ -24,6 +24,8 @@ type Trade struct {
 	// this value is more important than the profit in money for me.
 	// if negative, it means a loss.
 	Profit int `json:"profit" bson:"profit"`
+	// ExternalID is the unique identifier of the trade in the broker system.
+	ExternalID string `json:"externalId" bson:"externalId"`
 }
 
 // Price represents a price in the market.
