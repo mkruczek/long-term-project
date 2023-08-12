@@ -1,18 +1,34 @@
 package server
 
-import "market/market/infrastructure/baseServer"
-
-type Config struct {
-	UrlPath string
-	Port    string
-}
+import (
+	"context"
+	"market/market/infrastructure/baseServer"
+	"market/market/infrastructure/config"
+	"market/market/infrastructure/healthReady"
+	"market/market/infrastructure/log"
+	"market/market/infrastructure/mongo"
+)
 
 type Server struct {
-	bs baseServer.Server
+	baseServer.Server
 }
 
-func New(config Config) Server {
-	return Server{
-		bs: baseServer.New(config.UrlPath, config.Port),
+func New() *Server {
+	return &Server{
+		Server: baseServer.New(config.GetMarket().Http.URLPath, config.GetMarket().Http.Port),
 	}
+}
+
+func (svr *Server) Init(ctx context.Context) {
+
+	db, err := mongo.New(ctx, config.GetMarket().Mongo.DBName, config.GetMarket().Mongo.Host, config.GetMarket().Mongo.Port, config.GetMarket().Mongo.User, config.GetMarket().Mongo.Password)
+	if err != nil {
+		log.Fatalf(ctx, "can`t connect to mongo: %s", err)
+	}
+
+	svr.RegisterHealthReady(healthReady.New(
+		healthReady.Observer{
+			ServiceContextName: "database",
+			Service:            db,
+		}))
 }
