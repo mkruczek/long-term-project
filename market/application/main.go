@@ -4,15 +4,19 @@ import (
 	"context"
 	"market/market/application/server"
 	"market/market/infrastructure/log"
+	"market/market/infrastructure/tradeaProvider/xtb"
 )
 
 func main() {
 
 	mainCtx := context.Background()
-
 	log.Init("info")
 
-	svr := server.New()
+	xtbProv := xtb.NewProvider()
+
+	appServices := server.NewAppServices(xtbProv)
+
+	svr := server.New(appServices)
 
 	svr.Init(mainCtx)
 

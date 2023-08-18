@@ -11,11 +11,13 @@ import (
 
 type Server struct {
 	baseServer.Server
+	services appServices
 }
 
-func New() *Server {
+func New(services appServices) *Server {
 	return &Server{
-		Server: baseServer.New(config.GetMarket().Http.URLPath, config.GetMarket().Http.Port),
+		Server:   baseServer.New(config.GetMarket().Http.URLPath, config.GetMarket().Http.Port),
+		services: services,
 	}
 }
 
@@ -31,4 +33,8 @@ func (svr *Server) Init(ctx context.Context) {
 			ServiceContextName: "database",
 			Service:            db,
 		}))
+}
+
+func (svr *Server) Routes() {
+	svr.svr.GET("/ping", svr.ping)
 }
