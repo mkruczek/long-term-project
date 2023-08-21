@@ -36,5 +36,5 @@ func (svr *Server) Init(ctx context.Context) {
 }
 
 func (svr *Server) Routes() {
-	svr.svr.GET("/ping", svr.ping)
+	//todo route with upload file
 }
