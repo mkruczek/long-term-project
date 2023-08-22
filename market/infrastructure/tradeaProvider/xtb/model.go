@@ -25,9 +25,9 @@ type CSV struct {
 	CloseTime string `csv:"Close time"`
 	//	Close price
 	ClosePrice float64 `csv:"Close price"`
-	//	Profit
+	//	Profit in currency
 	Profit float64 `csv:"Profit"`
-	//	Net profit
+	//	Net profit in currency
 	NetProfit float64 `csv:"Net profit"`
 }
 
@@ -61,14 +61,18 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 }
 
 func calculateProfit(openPrice, closePrice domain.Price) int {
-	return int((closePrice.Value - openPrice.Value) * float64(openPrice.Coefficient))
+
+	op := int(openPrice.Value * float64(openPrice.Coefficient))
+	cp := int(closePrice.Value * float64(closePrice.Coefficient))
+
+	return cp - op
 }
 
 func getCoefficient(symbol string) int {
 	if strings.Contains(symbol, "JPY") {
-		return 100
+		return 1000
 	}
-	return 1000
+	return 100000
 }
 
 func parseTime(t string) (time.Time, error) {
