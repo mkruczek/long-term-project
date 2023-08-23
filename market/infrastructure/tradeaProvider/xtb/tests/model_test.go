@@ -30,6 +30,7 @@ func Test_ConvertXtbCsvToDomainModel(t *testing.T) {
 			expected: domain.Trade{
 				ID:         "12345678",
 				Symbol:     "EURUSD",
+				TradeSide:  domain.Buy,
 				OpenPrice:  domain.Price{Value: 1.00005, Coefficient: 100000},
 				OpenTime:   time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice: domain.Price{Value: 1.00006, Coefficient: 100000},
@@ -52,6 +53,7 @@ func Test_ConvertXtbCsvToDomainModel(t *testing.T) {
 			expected: domain.Trade{
 				ID:         "12345678",
 				Symbol:     "USDJPY",
+				TradeSide:  domain.Buy,
 				OpenPrice:  domain.Price{Value: 123.005, Coefficient: 1000},
 				OpenTime:   time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice: domain.Price{Value: 123.006, Coefficient: 1000},

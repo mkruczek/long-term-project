@@ -48,9 +48,17 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 	openPrice := domain.Price{Value: csv.OpenPrice, Coefficient: coefficient}
 	closePrice := domain.Price{Value: csv.ClosePrice, Coefficient: coefficient}
 
+	tradeSide := domain.UndefinedSide
+	if csv.Type == "Buy" {
+		tradeSide = domain.Buy
+	} else if csv.Type == "Sell" {
+		tradeSide = domain.Sell
+	}
+
 	return domain.Trade{
 		ID:         csv.Position,
 		Symbol:     csv.Symbol,
+		TradeSide:  tradeSide,
 		OpenPrice:  openPrice,
 		OpenTime:   openTime,
 		ClosePrice: closePrice,

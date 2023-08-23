@@ -2,6 +2,14 @@ package domain
 
 import "time"
 
+type TradeSide int8
+
+const (
+	UndefinedSide TradeSide = iota
+	Buy
+	Sell
+)
+
 // Trade represents a trade in the market.
 // This is the main domain model of this application.
 // for now, we use the same this struct for both json and bson to check if it works.
@@ -10,6 +18,9 @@ type Trade struct {
 	ID string `json:"id" bson:"_id"`
 	// Symbol is the symbol of the trade.
 	Symbol string `json:"symbol" bson:"symbol"`
+	// Type is the type of the trade.
+	// Buy(Long) or Sell(Short)
+	TradeSide TradeSide `json:"tradeSide" bson:"tradeSide"`
 	// OpenPrice is the price of the trade.
 	OpenPrice Price `json:"price" bson:"price"`
 	// OpenTime is the time the trade was opened.
