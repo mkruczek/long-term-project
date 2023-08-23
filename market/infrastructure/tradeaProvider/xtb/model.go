@@ -2,7 +2,6 @@ package xtb
 
 import (
 	"market/market/domain"
-	"strings"
 	"time"
 )
 
@@ -43,7 +42,7 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 		return domain.Trade{}, err
 	}
 
-	coefficient := getCoefficient(csv.Symbol)
+	coefficient := domain.GetCoefficient(csv.Symbol)
 
 	openPrice := domain.Price{Value: csv.OpenPrice, Coefficient: coefficient}
 	closePrice := domain.Price{Value: csv.ClosePrice, Coefficient: coefficient}
@@ -55,7 +54,7 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 		tradeSide = domain.Sell
 	}
 
-	return domain.Trade{
+	result := domain.Trade{
 		ID:         csv.Position,
 		Symbol:     csv.Symbol,
 		TradeSide:  tradeSide,
@@ -63,24 +62,12 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 		OpenTime:   openTime,
 		ClosePrice: closePrice,
 		CloseTime:  closeTime,
-		Profit:     calculateProfit(openPrice, closePrice),
 		ExternalID: csv.Position,
-	}, nil
-}
-
-func calculateProfit(openPrice, closePrice domain.Price) int {
-
-	op := int(openPrice.Value * float64(openPrice.Coefficient))
-	cp := int(closePrice.Value * float64(closePrice.Coefficient))
-
-	return cp - op
-}
-
-func getCoefficient(symbol string) int {
-	if strings.Contains(symbol, "JPY") {
-		return 1000
 	}
-	return 100000
+
+	result.CalculateProfit()
+
+	return result, nil
 }
 
 func parseTime(t string) (time.Time, error) {

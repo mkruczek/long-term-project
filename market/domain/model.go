@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type TradeSide int8
 
@@ -43,10 +46,30 @@ type Trade struct {
 type Price struct {
 	// Value is the value of the price.
 	Value float64 `json:"value" bson:"value"`
+	// Currency is the currency of the price.
+	// is the second part of the symbol under trade.
+	// for example, if the symbol is EURUSD, the currency is USD.
+	// for example, if the symbol is EURJPY, the currency is JPY.
+	Currency string `json:"currency" bson:"currency"`
 	// Coefficient is the coefficient of the price.
 	// it is used to calculate the value of the price.
 	// for example, if the value is 1.2345 and the coefficient is 10000,
 	// the value of the price is 12345.
 	// this is because there is difference between the value of the XXXUSD and XXXJPY.
 	Coefficient int `json:"coefficient" bson:"coefficient"`
+}
+
+// CalculateProfit calculates the profit of the trade.
+func (t *Trade) CalculateProfit() {
+	op := int(t.OpenPrice.Value * float64(t.OpenPrice.Coefficient))
+	cp := int(t.ClosePrice.Value * float64(t.ClosePrice.Coefficient))
+
+	t.Profit = cp - op
+}
+
+func GetCoefficient(symbol string) int {
+	if strings.Contains(symbol, "JPY") {
+		return 1000
+	}
+	return 100000
 }
