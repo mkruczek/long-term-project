@@ -61,10 +61,19 @@ type Price struct {
 
 // CalculateProfit calculates the profit of the trade.
 func (t *Trade) CalculateProfit() {
+
+	var sign int
+	switch t.TradeSide {
+	case Buy:
+		sign = 1
+	case Sell:
+		sign = -1
+	}
+
 	op := int(t.OpenPrice.Value * float64(t.OpenPrice.Coefficient))
 	cp := int(t.ClosePrice.Value * float64(t.ClosePrice.Coefficient))
 
-	t.Profit = cp - op
+	t.Profit = (cp - op) * sign
 }
 
 func GetCoefficient(symbol string) int {
