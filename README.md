@@ -1,5 +1,8 @@
 # long-term-project
 
+## ideas to aplay during development
+* skip volume data in basic xtb import for some time, and then add it along with db migration
+
 ## 2023-07-27
 inspired by this video:
 https://www.youtube.com/watch?v=VTCP8RzBx6w
