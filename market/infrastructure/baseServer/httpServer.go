@@ -12,7 +12,7 @@ type healthReady interface {
 }
 
 type Server struct {
-	svr         *gin.Engine
+	*gin.Engine
 	Port        string
 	UrlPath     string
 	HealthReady healthReady
@@ -20,19 +20,19 @@ type Server struct {
 
 func New(urlPath, port string) Server {
 	return Server{
-		svr:     gin.New(),
+		Engine:  gin.New(),
 		UrlPath: urlPath,
 		Port:    port,
 	}
 }
 
 func (bs *Server) ListenAndServe(ctx context.Context) error {
-	return bs.svr.Run(fmt.Sprintf(":%s", bs.Port))
+	return bs.Run(fmt.Sprintf(":%s", bs.Port))
 }
 
 func (bs *Server) RegisterHealthReady(hr healthReady) {
 	bs.HealthReady = hr
 
-	bs.svr.GET(fmt.Sprintf("%s/health", bs.UrlPath), health(bs.HealthReady))
-	bs.svr.GET(fmt.Sprintf("%s/ready", bs.UrlPath), ready(bs.HealthReady))
+	bs.GET(fmt.Sprintf("%s/health", bs.UrlPath), health(bs.HealthReady))
+	bs.GET(fmt.Sprintf("%s/ready", bs.UrlPath), ready(bs.HealthReady))
 }

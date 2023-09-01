@@ -28,13 +28,11 @@ func (svr *Server) Init(ctx context.Context) {
 		log.Fatalf(ctx, "can`t connect to mongo: %s", err)
 	}
 
+	svr.Routes()
+
 	svr.RegisterHealthReady(healthReady.New(
 		healthReady.Observer{
 			ServiceContextName: "database",
 			Service:            db,
 		}))
-}
-
-func (svr *Server) Routes() {
-	//todo route with upload file
 }

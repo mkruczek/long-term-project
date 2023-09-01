@@ -71,7 +71,7 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 }
 
 func parseTime(t string) (time.Time, error) {
-	result, err := time.Parse("2006-01-02 15:04:05", t)
+	result, err := time.Parse("02.01.2006 15:04:05", t)
 	if err != nil {
 		return time.Time{}, err
 	}
