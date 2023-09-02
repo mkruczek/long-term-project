@@ -1,6 +1,7 @@
 package xtb
 
 import (
+	"fmt"
 	"market/market/domain"
 	"time"
 )
@@ -47,11 +48,14 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 	openPrice := domain.Price{Value: csv.OpenPrice, Coefficient: coefficient}
 	closePrice := domain.Price{Value: csv.ClosePrice, Coefficient: coefficient}
 
-	tradeSide := domain.UndefinedSide
-	if csv.Type == "Buy" {
+	var tradeSide domain.TradeSide
+	switch csv.Type {
+	case "Buy", "Buy Stop", "Buy Limit":
 		tradeSide = domain.Buy
-	} else if csv.Type == "Sell" {
+	case "Sell", "Sell Stop", "Sell Limit":
 		tradeSide = domain.Sell
+	default:
+		return domain.Trade{}, fmt.Errorf("unknown trade type: %s", csv.Type)
 	}
 
 	result := domain.Trade{
