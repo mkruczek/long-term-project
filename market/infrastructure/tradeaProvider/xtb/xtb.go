@@ -17,7 +17,6 @@ func (p Provider) UpsertTrades(data []*CSV) error {
 
 	for i, v := range data {
 		dm, err := v.ToDomainModel()
-		dm.CalculateProfit()
 
 		profit += dm.Profit
 
