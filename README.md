@@ -2,6 +2,7 @@
 
 ## ideas to aplay during development
 * skip volume data in basic xtb import for some time, and then add it along with db migration
+* in similar way add "XTB::" prefix to all existing trades in db to externalId column (after adding xtb import from xlsx, but before mt4 import)
 
 ## 2023-07-27
 inspired by this video:
