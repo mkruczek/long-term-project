@@ -53,5 +53,5 @@ func (t *Trade) CalculateProfit() {
 		sign = -1
 	}
 
-	t.Profit = (t.ClosePrice.Amount - t.OpenPrice.Amount) * sign
+	t.Profit = (t.ClosePrice.Subtract(t.OpenPrice).Amount) * sign
 }

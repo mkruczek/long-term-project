@@ -52,6 +52,22 @@ func NewPrice[C Convertible](amount C, currency string) (Price, error) {
 	}, nil
 }
 
+func (p Price) Subtract(price Price) Price {
+	return Price{
+		Amount:      p.Amount - price.Amount,
+		Currency:    p.Currency,
+		coefficient: p.coefficient,
+	}
+}
+
+func (p Price) Add(price Price) Price {
+	return Price{
+		Amount:      p.Amount + price.Amount,
+		Currency:    p.Currency,
+		coefficient: p.coefficient,
+	}
+}
+
 func getCoefficient(symbol string) int {
 	if strings.Contains(symbol, "JPY") {
 		return 1000
