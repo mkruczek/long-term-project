@@ -3,6 +3,7 @@ package xtb
 import (
 	"fmt"
 	"market/market/domain"
+	"market/market/domain/fxmoney"
 	"time"
 )
 
@@ -43,10 +44,17 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 		return domain.Trade{}, err
 	}
 
-	coefficient := domain.GetCoefficient(csv.Symbol)
+	currency := csv.Symbol[3:]
 
-	openPrice := domain.Price{Value: csv.OpenPrice, Coefficient: coefficient}
-	closePrice := domain.Price{Value: csv.ClosePrice, Coefficient: coefficient}
+	openPrice, err := fxmoney.NewPrice(csv.OpenPrice, currency)
+	if err != nil {
+		return domain.Trade{}, err
+	}
+
+	closePrice, err := fxmoney.NewPrice(csv.ClosePrice, currency)
+	if err != nil {
+		return domain.Trade{}, err
+	}
 
 	var tradeSide domain.TradeSide
 	switch csv.Type {

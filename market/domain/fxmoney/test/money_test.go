@@ -22,6 +22,7 @@ func Test_CreateNewPrice_Float64(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			actual, err := fxmoney.NewPrice(tc.amount, tc.currency)
 			if err != nil {
 				t.Fatalf("unexpected error: %s", err)
@@ -53,6 +54,7 @@ func Test_CreateNewPrice_String(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			actual, err := fxmoney.NewPrice(tc.amount, tc.currency)
 			if err != nil {
 				t.Fatalf("unexpected error: %s", err)
