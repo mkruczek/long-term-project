@@ -1,6 +1,8 @@
 package server
 
-import "market/market/infrastructure/tradeaProvider/xtb"
+import (
+	"market/market/domain/tradeProvider/xtb"
+)
 
 // appServices - services for application
 type appServices struct {

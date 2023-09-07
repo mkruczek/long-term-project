@@ -5,7 +5,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"market/market/domain"
 	"market/market/domain/fxmoney"
-	"market/market/infrastructure/tradeaProvider/xtb"
+	"market/market/domain/tradeProvider/xtb"
 	"testing"
 	"time"
 )
