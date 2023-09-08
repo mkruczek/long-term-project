@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"market/market/domain"
@@ -47,10 +48,10 @@ func (c Provider) Insert(ctx context.Context, trade domain.Trade) error {
 	return nil
 }
 
-func (c Provider) Read(ctx context.Context, id string) (domain.Trade, error) {
+func (c Provider) Get(ctx context.Context, id string) (domain.Trade, error) {
 	coll := c.client.Database("market").Collection("trades")
 	var trade domain.Trade
-	err := coll.FindOne(ctx, domain.Trade{ID: id}).Decode(&trade)
+	err := coll.FindOne(ctx, bson.D{{"_id", id}}).Decode(&trade)
 	if err != nil {
 		return domain.Trade{}, err
 	}
@@ -59,7 +60,7 @@ func (c Provider) Read(ctx context.Context, id string) (domain.Trade, error) {
 
 func (c Provider) Update(ctx context.Context, trade domain.Trade) error {
 	coll := c.client.Database("market").Collection("trades")
-	_, err := coll.UpdateOne(ctx, domain.Trade{ID: trade.ID}, trade)
+	_, err := coll.UpdateOne(ctx, bson.D{{"_id", trade.ID}}, trade)
 	if err != nil {
 		return err
 	}
@@ -68,9 +69,23 @@ func (c Provider) Update(ctx context.Context, trade domain.Trade) error {
 
 func (c Provider) Delete(ctx context.Context, id string) error {
 	coll := c.client.Database("market").Collection("trades")
-	_, err := coll.DeleteOne(ctx, domain.Trade{ID: id})
+	_, err := coll.DeleteOne(ctx, bson.D{{"_id", id}})
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (c Provider) List(ctx context.Context) ([]domain.Trade, error) {
+	coll := c.client.Database("market").Collection("trades")
+	cursor, err := coll.Find(ctx, bson.D{{}})
+	if err != nil {
+		return nil, err
+	}
+	var trades []domain.Trade
+	err = cursor.All(ctx, &trades)
+	if err != nil {
+		return nil, err
+	}
+	return trades, nil
 }
