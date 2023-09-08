@@ -7,5 +7,12 @@ import (
 
 func (svr *Server) Routes() {
 
-	svr.GET(fmt.Sprintf("%s/upload/xtb", svr.UrlPath), handlers.XtbUpload(svr.services.XtbProvider))
+	mainGroup := svr.Group(fmt.Sprintf("%s", svr.UrlPath))
+
+	uploadGroup := mainGroup.Group("/upload")
+	uploadGroup.POST("/xtb", handlers.XtbUpload(svr.services.xtb))
+
+	tradeGroup := mainGroup.Group("/trades")
+	tradeGroup.GET("/", handlers.ListTrades(svr.services.trades))
+	tradeGroup.GET("/:id", handlers.GetTrade(svr.services.trades))
 }

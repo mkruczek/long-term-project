@@ -1,17 +1,22 @@
 package server
 
 import (
-	"market/market/domain/tradeProvider/xtb"
+	"market/market/application/service"
+	"market/market/domain"
+	"market/market/domain/dataProviders/xtb"
 )
 
 // appServices - services for application
 type appServices struct {
-	XtbProvider xtb.Provider
+	trades service.Trades
+
+	xtb domain.Provider[*xtb.CSV]
 }
 
 // NewAppServices - create new appServices
-func NewAppServices(xtbProvider xtb.Provider) appServices {
+func NewAppServices(trd service.Trades, xtb domain.Provider[*xtb.CSV]) appServices {
 	return appServices{
-		XtbProvider: xtbProvider,
+		trades: trd,
+		xtb:    xtb,
 	}
 }

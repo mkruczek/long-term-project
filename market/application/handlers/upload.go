@@ -6,17 +6,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
 	"io"
-	xtb2 "market/market/domain/tradeProvider/xtb"
+	"market/market/domain"
+	"market/market/domain/dataProviders/xtb"
+
 	"net/http"
 	"os"
 )
 
-func XtbUpload(provider xtb2.Provider) func(c *gin.Context) {
+func XtbUpload(provider domain.Provider[*xtb.CSV]) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		if err := c.Request.ParseMultipartForm(5 * 1024 * 1024); err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("parse form err: %s", err))
 			return
 		}
+
+		ctx := c.Request.Context()
 
 		file, err := c.FormFile("file")
 		if err != nil {
@@ -41,7 +45,7 @@ func XtbUpload(provider xtb2.Provider) func(c *gin.Context) {
 			}
 		}(xmlFile)
 
-		var xtbData []*xtb2.CSV
+		var xtbData []*xtb.CSV
 		gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
 			r := csv.NewReader(in)
 			r.Comma = ';'
@@ -51,7 +55,7 @@ func XtbUpload(provider xtb2.Provider) func(c *gin.Context) {
 			c.String(http.StatusBadRequest, fmt.Sprintf("unmarshal file err: %s", err))
 		}
 
-		err = provider.Insert(xtbData)
+		err = provider.Insert(ctx, xtbData)
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upsert trades err: %s", err))
 			return
