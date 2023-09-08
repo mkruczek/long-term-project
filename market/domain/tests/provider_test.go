@@ -3,7 +3,7 @@ package tests
 import (
 	"context"
 	"market/market/domain"
-	"market/market/domain/tradeProvider/xtb"
+	"market/market/domain/dataProviders/xtb"
 	"testing"
 )
 
@@ -11,20 +11,6 @@ type dummyRepository map[string]domain.Trade
 
 func (d dummyRepository) Insert(ctx context.Context, trade domain.Trade) error {
 	d[trade.ID] = trade
-	return nil
-}
-
-func (d dummyRepository) Read(ctx context.Context, id string) (domain.Trade, error) {
-	return d[id], nil
-}
-
-func (d dummyRepository) Update(ctx context.Context, trade domain.Trade) error {
-	d[trade.ID] = trade
-	return nil
-}
-
-func (d dummyRepository) Delete(ctx context.Context, id string) error {
-	delete(d, id)
 	return nil
 }
 
@@ -43,7 +29,7 @@ func Test_Provider(t *testing.T) {
 
 	dummyRepo := dummyRepository{}
 
-	p := xtb.NewProvider(dummyRepo)
+	p := domain.NewProvider[*xtb.CSV](dummyRepo)
 
 	err := p.Insert(ctx, data)
 	if err != nil {
@@ -54,12 +40,12 @@ func Test_Provider(t *testing.T) {
 		t.Errorf("want %d, got %d", want, got)
 	}
 
-	read, err := p.Read(ctx, traderIDUnderTest)
-	if err != nil {
-		t.Fatalf("error: %s", err)
+	want := data[0]
+	got := dummyRepo[traderIDUnderTest]
+
+	if want.Symbol != got.Symbol {
+		t.Errorf("want %v, got %v", want.Symbol, got.Symbol)
 	}
 
-	if want, got := data[0].Position, read.ID; want != got {
-		t.Errorf("want %s, got %s", want, got)
-	}
+	//todo add more checks
 }
