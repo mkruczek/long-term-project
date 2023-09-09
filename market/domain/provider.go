@@ -7,8 +7,7 @@ type ToModel interface {
 }
 
 type inserter interface {
-	//todo -> change to bulk insert
-	Insert(ctx context.Context, trade Trade) error
+	BulkInsert(ctx context.Context, trades []Trade) error
 }
 
 type Provider[K ToModel] struct {
@@ -19,17 +18,20 @@ func NewProvider[K ToModel](r inserter) Provider[K] {
 	return Provider[K]{repo: r}
 }
 
-func (p Provider[K]) Insert(ctx context.Context, data []K) error {
-	for _, v := range data {
+func (p Provider[K]) BulkInsert(ctx context.Context, data []K) error {
+
+	trades := make([]Trade, len(data))
+	for i, v := range data {
 		dm, err := v.ToDomainModel()
 		if err != nil {
 			return err
 		}
-		err = p.repo.Insert(ctx, dm)
-		if err != nil {
-			//todo transaction or bulk
-			return err
-		}
+		trades[i] = dm
+	}
+	err := p.repo.BulkInsert(ctx, trades)
+	if err != nil {
+		return err
 	}
 	return nil
+
 }

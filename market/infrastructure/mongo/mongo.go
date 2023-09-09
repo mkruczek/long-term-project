@@ -48,6 +48,19 @@ func (c Provider) Insert(ctx context.Context, trade domain.Trade) error {
 	return nil
 }
 
+func (c Provider) InsertBulk(ctx context.Context, trades []domain.Trade) error {
+	coll := c.client.Database("market").Collection("trades")
+	docs := make([]interface{}, len(trades))
+	for i, trade := range trades {
+		docs[i] = trade
+	}
+	_, err := coll.InsertMany(ctx, docs)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c Provider) Get(ctx context.Context, id string) (domain.Trade, error) {
 	coll := c.client.Database("market").Collection("trades")
 	var trade domain.Trade

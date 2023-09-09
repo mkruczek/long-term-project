@@ -55,7 +55,7 @@ func XtbUpload(provider domain.Provider[*xtb.CSV]) func(c *gin.Context) {
 			c.String(http.StatusBadRequest, fmt.Sprintf("unmarshal file err: %s", err))
 		}
 
-		err = provider.Insert(ctx, xtbData)
+		err = provider.BulkInsert(ctx, xtbData)
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upsert trades err: %s", err))
 			return
