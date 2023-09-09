@@ -10,6 +10,11 @@ import (
 	"market/market/infrastructure/log"
 )
 
+const (
+	dataBase   = "market"
+	collection = "trades"
+)
+
 type Provider struct {
 	client *mongo.Client
 }
@@ -40,7 +45,7 @@ func (c Provider) Ping(ctx context.Context) error {
 }
 
 func (c Provider) Insert(ctx context.Context, trade domain.Trade) error {
-	coll := c.client.Database("market").Collection("trades")
+	coll := c.client.Database(dataBase).Collection(collection)
 	_, err := coll.InsertOne(ctx, trade)
 	if err != nil {
 		return err
@@ -49,7 +54,7 @@ func (c Provider) Insert(ctx context.Context, trade domain.Trade) error {
 }
 
 func (c Provider) InsertBulk(ctx context.Context, trades []domain.Trade) error {
-	coll := c.client.Database("market").Collection("trades")
+	coll := c.client.Database(dataBase).Collection(collection)
 	docs := make([]interface{}, len(trades))
 	for i, trade := range trades {
 		docs[i] = trade
@@ -62,7 +67,7 @@ func (c Provider) InsertBulk(ctx context.Context, trades []domain.Trade) error {
 }
 
 func (c Provider) Get(ctx context.Context, id string) (domain.Trade, error) {
-	coll := c.client.Database("market").Collection("trades")
+	coll := c.client.Database(dataBase).Collection(collection)
 	var trade domain.Trade
 	err := coll.FindOne(ctx, bson.D{{"_id", id}}).Decode(&trade)
 	if err != nil {
@@ -72,7 +77,7 @@ func (c Provider) Get(ctx context.Context, id string) (domain.Trade, error) {
 }
 
 func (c Provider) Update(ctx context.Context, trade domain.Trade) error {
-	coll := c.client.Database("market").Collection("trades")
+	coll := c.client.Database(dataBase).Collection(collection)
 	_, err := coll.UpdateOne(ctx, bson.D{{"_id", trade.ID}}, trade)
 	if err != nil {
 		return err
@@ -81,7 +86,7 @@ func (c Provider) Update(ctx context.Context, trade domain.Trade) error {
 }
 
 func (c Provider) Delete(ctx context.Context, id string) error {
-	coll := c.client.Database("market").Collection("trades")
+	coll := c.client.Database(dataBase).Collection(collection)
 	_, err := coll.DeleteOne(ctx, bson.D{{"_id", id}})
 	if err != nil {
 		return err
@@ -90,7 +95,7 @@ func (c Provider) Delete(ctx context.Context, id string) error {
 }
 
 func (c Provider) List(ctx context.Context) ([]domain.Trade, error) {
-	coll := c.client.Database("market").Collection("trades")
+	coll := c.client.Database(dataBase).Collection(collection)
 	cursor, err := coll.Find(ctx, bson.D{{}})
 	if err != nil {
 		return nil, err
