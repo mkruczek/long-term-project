@@ -9,14 +9,16 @@ import (
 // appServices - services for application
 type appServices struct {
 	trades service.Trades
+	stats  service.Stats
 
 	xtb domain.Provider[*xtb.CSV]
 }
 
 // NewAppServices - create new appServices
-func NewAppServices(trd service.Trades, xtb domain.Provider[*xtb.CSV]) appServices {
+func NewAppServices(trd service.Trades, sts service.Stats, xtb domain.Provider[*xtb.CSV]) appServices {
 	return appServices{
 		trades: trd,
+		stats:  sts,
 		xtb:    xtb,
 	}
 }

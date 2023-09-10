@@ -1,9 +1,10 @@
 package service
 
 import (
-	"market/market/domain"
+	"context"
+	"time"
 )
 
 type Stats interface {
-	Profit(trades []domain.Trade) (float64, error)
+	Profit(ctx context.Context, startTime, endTime time.Time) (int, error)
 }

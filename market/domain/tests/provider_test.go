@@ -9,8 +9,11 @@ import (
 
 type dummyRepository map[string]domain.Trade
 
-func (d dummyRepository) Insert(ctx context.Context, trade domain.Trade) error {
-	d[trade.ID] = trade
+func (d dummyRepository) BulkInsert(ctx context.Context, trades []domain.Trade) error {
+
+	for _, t := range trades {
+		d[t.ID] = t
+	}
 	return nil
 }
 
@@ -31,7 +34,7 @@ func Test_Provider(t *testing.T) {
 
 	p := domain.NewProvider[*xtb.CSV](dummyRepo)
 
-	err := p.Insert(ctx, data)
+	err := p.BulkInsert(ctx, data)
 	if err != nil {
 		t.Fatalf("error: %s", err)
 	}

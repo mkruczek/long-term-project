@@ -23,7 +23,7 @@ func main() {
 	xtbProv := domain.NewProvider[*xtb.CSV](mongoDB)
 	tradeSrv := domain.NewService(mongoDB)
 
-	appServices := server.NewAppServices(tradeSrv, xtbProv)
+	appServices := server.NewAppServices(tradeSrv, tradeSrv, xtbProv)
 
 	svr := server.New(appServices)
 

@@ -53,7 +53,7 @@ func (c Provider) Insert(ctx context.Context, trade domain.Trade) error {
 	return nil
 }
 
-func (c Provider) InsertBulk(ctx context.Context, trades []domain.Trade) error {
+func (c Provider) BulkInsert(ctx context.Context, trades []domain.Trade) error {
 	coll := c.client.Database(dataBase).Collection(collection)
 	docs := make([]interface{}, len(trades))
 	for i, trade := range trades {
