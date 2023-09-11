@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"market/market/domain"
 	"market/market/infrastructure/log"
+	"time"
 )
 
 const (
@@ -94,9 +95,28 @@ func (c Provider) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (c Provider) List(ctx context.Context) ([]domain.Trade, error) {
+func (c Provider) GetAll(ctx context.Context) ([]domain.Trade, error) {
 	coll := c.client.Database(dataBase).Collection(collection)
 	cursor, err := coll.Find(ctx, bson.D{{}})
+	if err != nil {
+		return nil, err
+	}
+	var trades []domain.Trade
+	err = cursor.All(ctx, &trades)
+	if err != nil {
+		return nil, err
+	}
+	return trades, nil
+}
+
+func (c Provider) GetRange(ctx context.Context, startTime, endTime time.Time) ([]domain.Trade, error) {
+	coll := c.client.Database(dataBase).Collection(collection)
+	cursor, err := coll.Find(ctx,
+		bson.D{
+			{"openTime", bson.D{{"$gt", startTime}, {"$lt", endTime}}},
+			{"closeTime", bson.D{{"$gt", startTime}, {"$lt", endTime}}},
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
