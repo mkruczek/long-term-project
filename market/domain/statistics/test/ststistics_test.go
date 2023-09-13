@@ -36,6 +36,26 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 			profit:  60,
 			average: 20,
 		},
+		{
+			name: "trades with decimal up rounding",
+			trades: []domain.Trade{
+				{Profit: 100},
+				{Profit: 100},
+				{Profit: 105},
+			},
+			profit:  305,
+			average: 102,
+		},
+		{
+			name: "trades with decimal down rounding",
+			trades: []domain.Trade{
+				{Profit: 100},
+				{Profit: 100},
+				{Profit: 104},
+			},
+			profit:  304,
+			average: 101,
+		},
 	}
 
 	for _, tc := range testCases {

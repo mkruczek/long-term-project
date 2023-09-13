@@ -3,6 +3,7 @@ package statistics
 
 import (
 	"market/market/domain"
+	"math"
 )
 
 type Summary struct {
@@ -20,7 +21,8 @@ func Calculate(trades []domain.Trade) Summary {
 	}
 
 	pro := profit(trades)
-	averagePro := pro / len(trades)
+	averagePro := int(math.Round(float64(pro) / float64(len(trades))))
+
 	return Summary{
 		Profit:        pro,
 		AverageProfit: averagePro,
