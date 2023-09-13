@@ -1,14 +1,36 @@
 // Package statistics provides calculation of statistics for trades
 package statistics
 
-import "market/market/domain"
+import (
+	"market/market/domain"
+)
 
-// Profit - POC for calculate profit, return only points value
-func Profit(trades []domain.Trade) int {
-	// Calculate profit for trades
-	var profit int
-	for _, trade := range trades {
-		profit += trade.Profit
+type Summary struct {
+	// Profit is the sum of all profits in points
+	Profit int `json:"profit"`
+	// AverageProfit is the average profit rounded to the nearest integer
+	// I chose to round to the nearest integer because at the end this is result in points, not pips
+	AverageProfit int `json:"averageProfit"`
+}
+
+func Calculate(trades []domain.Trade) Summary {
+
+	if len(trades) == 0 {
+		return Summary{}
 	}
-	return profit
+
+	pro := profit(trades)
+	averagePro := pro / len(trades)
+	return Summary{
+		Profit:        pro,
+		AverageProfit: averagePro,
+	}
+}
+
+func profit(trades []domain.Trade) int {
+	var result int
+	for _, trade := range trades {
+		result += trade.Profit
+	}
+	return result
 }
