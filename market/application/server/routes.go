@@ -18,5 +18,5 @@ func (svr *Server) Routes() {
 
 	// statistic part
 	statsGroup := mainGroup.Group("/stats")
-	statsGroup.POST("", handlers.Profit(svr.services.stats))
+	statsGroup.POST("", handlers.Stats(svr.services.trades))
 }

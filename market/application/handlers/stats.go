@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"market/market/application/service"
+	"market/market/domain/statistics"
 	"net/http"
 	"time"
 )
@@ -12,11 +13,7 @@ type statsQuery struct {
 	EndTime   string `json:"endTime"`
 }
 
-type stats struct {
-	Profit int `json:"profit"`
-}
-
-func Profit(sts service.Stats) gin.HandlerFunc {
+func Stats(trd service.Trades) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		var sq statsQuery
@@ -37,16 +34,14 @@ func Profit(sts service.Stats) gin.HandlerFunc {
 			return
 		}
 
-		profit, err := sts.Profit(ctx, startTime, endTime)
+		trades, err := trd.GetRange(ctx, startTime, endTime)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		response := stats{
-			Profit: profit,
-		}
+		sts := statistics.Calculate(trades)
 
-		c.JSON(http.StatusOK, response)
+		c.JSON(http.StatusOK, sts)
 	}
 }
