@@ -90,6 +90,7 @@ func profit(trades []domain.Trade) int {
 func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- tradeWithCharacteristic) {
 	defer wg.Done()
 	var b domain.Trade
+	b.Profit = math.MinInt64
 	for _, trade := range trades {
 		if trade.Profit > b.Profit {
 			b = trade
@@ -102,6 +103,7 @@ func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- trad
 func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- tradeWithCharacteristic) {
 	defer wg.Done()
 	var w domain.Trade
+	w.Profit = math.MaxInt64
 	for _, trade := range trades {
 		if trade.Profit < w.Profit {
 			w = trade

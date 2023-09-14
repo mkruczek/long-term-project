@@ -72,25 +72,34 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 	}
 }
 
-func TestCalculate_BestTrade_WorstTrade(t *testing.T) {
-	worst := domain.Trade{Profit: -100}
-	best := domain.Trade{Profit: 100}
+func TestCalculate_bestTrade_worstTrade(t *testing.T) {
 
-	trades := []domain.Trade{
-		worst,
-		best,
-		{Profit: 10},
-		{Profit: 20},
-		{Profit: 30},
+	testCases := []struct {
+		name        string
+		trades      []domain.Trade
+		bestProfit  int
+		worstProfit int
+	}{
+		{name: "nil", trades: nil, bestProfit: 0, worstProfit: 0},
+		{name: "empty", trades: []domain.Trade{}, bestProfit: 0, worstProfit: 0},
+		{name: "one trade", trades: []domain.Trade{{Profit: 10}}, bestProfit: 10, worstProfit: 10},
+		{name: "simple trades", trades: []domain.Trade{{Profit: -10}, {Profit: 20}, {Profit: 30}}, bestProfit: 30, worstProfit: -10},
+		{name: "all trades are equal", trades: []domain.Trade{{Profit: 10}, {Profit: 10}, {Profit: 10}}, bestProfit: 10, worstProfit: 10},
+		{name: "all are in plus", trades: []domain.Trade{{Profit: 10}, {Profit: 20}, {Profit: 30}}, bestProfit: 30, worstProfit: 10},
+		{name: "all are in minus", trades: []domain.Trade{{Profit: -10}, {Profit: -20}, {Profit: -30}}, bestProfit: -10, worstProfit: -30},
 	}
 
-	summary := statistics.Calculate(trades)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			summary := statistics.Calculate(tc.trades)
 
-	if summary.BestTrade.Profit != best.Profit {
-		t.Errorf("Expected best trade to be %v, got %v", best, summary.BestTrade)
-	}
+			if summary.BestTrade.Profit != tc.bestProfit {
+				t.Errorf("Expected best trade to be %v, got %v", tc.bestProfit, summary.BestTrade.Profit)
+			}
 
-	if summary.WorstTrade.Profit != worst.Profit {
-		t.Errorf("Expected worst trade to be %v, got %v", worst, summary.WorstTrade)
+			if summary.WorstTrade.Profit != tc.worstProfit {
+				t.Errorf("Expected worst trade to be %v, got %v", tc.worstProfit, summary.WorstTrade.Profit)
+			}
+		})
 	}
 }
