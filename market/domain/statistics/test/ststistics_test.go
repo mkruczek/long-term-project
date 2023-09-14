@@ -7,7 +7,6 @@ import (
 )
 
 func TestCalculate_Profit_AvrProfit(t *testing.T) {
-
 	testCases := []struct {
 		name    string
 		trades  []domain.Trade
@@ -70,5 +69,28 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 				t.Errorf("Expected average profit to be %d, got %d", tc.average, summary.AverageProfit)
 			}
 		})
+	}
+}
+
+func TestCalculate_BestTrade_WorstTrade(t *testing.T) {
+	worst := domain.Trade{Profit: -100}
+	best := domain.Trade{Profit: 100}
+
+	trades := []domain.Trade{
+		worst,
+		best,
+		{Profit: 10},
+		{Profit: 20},
+		{Profit: 30},
+	}
+
+	summary := statistics.Calculate(trades)
+
+	if summary.BestTrade.Profit != best.Profit {
+		t.Errorf("Expected best trade to be %v, got %v", best, summary.BestTrade)
+	}
+
+	if summary.WorstTrade.Profit != worst.Profit {
+		t.Errorf("Expected worst trade to be %v, got %v", worst, summary.WorstTrade)
 	}
 }
