@@ -2,7 +2,7 @@ package domain
 
 import "context"
 
-type ToModel interface {
+type toModel interface {
 	ToDomainModel() (Trade, error)
 }
 
@@ -10,11 +10,11 @@ type inserter interface {
 	BulkInsert(ctx context.Context, trades []Trade) error
 }
 
-type Provider[K ToModel] struct {
+type Provider[K toModel] struct {
 	repo inserter
 }
 
-func NewProvider[K ToModel](r inserter) Provider[K] {
+func NewProvider[K toModel](r inserter) Provider[K] {
 	return Provider[K]{repo: r}
 }
 
@@ -33,5 +33,4 @@ func (p Provider[K]) BulkInsert(ctx context.Context, data []K) error {
 		return err
 	}
 	return nil
-
 }
