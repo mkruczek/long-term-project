@@ -2,7 +2,10 @@
 package statistics
 
 import (
+	"context"
+	"github.com/jinzhu/copier"
 	"market/market/domain"
+	"market/market/infrastructure/log"
 	"math"
 	"sync"
 )
@@ -19,95 +22,69 @@ type Summary struct {
 	WorstTrade domain.Trade `json:"worstTrade"`
 }
 
-type characteristic int
-
-func (c characteristic) String() string {
-	switch c {
-	case best:
-		return "best"
-	case worst:
-		return "worst"
-	default:
-		return "unknown"
-	}
-}
-
-const (
-	unknown characteristic = iota
-	best
-	worst
-)
-
-// tradesMap is a map of trades by their characteristics: worst, best, etc.
-type tradesMap map[characteristic]domain.Trade
-
-type tradeWithCharacteristic struct {
-	trade          domain.Trade
-	characteristic characteristic
-}
-
-// todo figure out how to do all inner calculations in generic way
 func Calculate(trades []domain.Trade) Summary {
 
 	if len(trades) == 0 {
 		return Summary{}
 	}
 
-	pro := profit(trades)
-	averagePro := int(math.Round(float64(pro) / float64(len(trades))))
-
-	resultChan := make(chan tradeWithCharacteristic, 2)
+	resultChan := make(chan Summary, 3)
 	wg := &sync.WaitGroup{}
 
-	wg.Add(2)
+	wg.Add(3)
+	go profit(wg, trades, resultChan)
 	go bestTrade(wg, trades, resultChan)
 	go worstTrade(wg, trades, resultChan)
 
 	wg.Wait()
 	close(resultChan)
 
-	tradesMap := make(tradesMap)
-	for result := range resultChan {
-		tradesMap[result.characteristic] = result.trade
+	var result Summary
+	for r := range resultChan {
+		err := copier.CopyWithOption(&result, &r, copier.Option{IgnoreEmpty: true})
+		if err != nil {
+			//todo? should i return error here?
+			log.Errorf(context.Background(), "error collecting statistic for summary: %v", err)
+			return Summary{}
+		}
 	}
 
-	return Summary{
-		Profit:        pro,
-		AverageProfit: averagePro,
-		BestTrade:     tradesMap[best],
-		WorstTrade:    tradesMap[worst],
-	}
+	result.AverageProfit = int(math.Round(float64(result.Profit) / float64(len(trades))))
+
+	return result
 }
 
-func profit(trades []domain.Trade) int {
+func profit(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+	defer wg.Done()
 	var result int
 	for _, trade := range trades {
 		result += trade.Profit
 	}
-	return result
+	resultChan <- Summary{Profit: result}
 }
 
-func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- tradeWithCharacteristic) {
+func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
 	defer wg.Done()
-	var b domain.Trade
-	b.Profit = math.MinInt64
+	best := domain.Trade{
+		Profit: math.MinInt64,
+	}
 	for _, trade := range trades {
-		if trade.Profit > b.Profit {
-			b = trade
+		if trade.Profit > best.Profit {
+			best = trade
 		}
 	}
-	resultChan <- tradeWithCharacteristic{trade: b, characteristic: best}
-
+	resultChan <- Summary{BestTrade: best}
 }
 
-func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- tradeWithCharacteristic) {
+func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
 	defer wg.Done()
-	var w domain.Trade
-	w.Profit = math.MaxInt64
+	worst := domain.Trade{
+		Profit: math.MaxInt64,
+	}
 	for _, trade := range trades {
-		if trade.Profit < w.Profit {
-			w = trade
+		if trade.Profit < worst.Profit {
+			worst = trade
 		}
 	}
-	resultChan <- tradeWithCharacteristic{trade: w, characteristic: worst}
+	resultChan <- Summary{WorstTrade: worst}
 }
