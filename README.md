@@ -1,9 +1,11 @@
 # long-term-project
 
-This is a _long-term project_ to learn and practice software development on on-line shop example, like ebay, amazon, allegro, etc.
-i think set up some kind of app is much simpler then maintain it, add new features, refactor it, etc.
-so i will try to do it... try to imagine that we do not have any on-line shop (we have back to 90` :D ) and we want to create one.  
-first with very basic features to allow to connection some sellers and buyers. will try to do this as POC - so some quick way to deliver something.
-then i will try to refactor it to good quality code. not sure want this exactly mean...  
-but for now i know that most challenging part is developing app witch is running on production, and i want to try to simulate it.
+This is a _long-term project_ to learn and practice software development.
+base on my experience i think set up some kind of app is much simpler then maintain it, add new features, refactor it, etc.
+so i will try to do it... 
 
+scope of this project is app for collect statistics about trading, like myfxbook.com or fxblue.com.
+ofc this is not any competition for them, just my way to learn and practice software development.
+
+### structure of project
+todo :D
