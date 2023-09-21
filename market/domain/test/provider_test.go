@@ -1,4 +1,4 @@
-package tests
+package test
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 type dummyRepository map[string]domain.Trade
 
 func (d dummyRepository) BulkInsert(ctx context.Context, trades []domain.Trade) error {
-
 	for _, t := range trades {
 		d[t.ID] = t
 	}
