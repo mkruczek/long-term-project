@@ -127,3 +127,23 @@ func (c Provider) GetRange(ctx context.Context, startTime, endTime time.Time) ([
 	}
 	return trades, nil
 }
+
+func (c Provider) GetRangeAndSymbol(ctx context.Context, startTime, endTime time.Time, symbol string) ([]domain.Trade, error) {
+	coll := c.client.Database(dataBase).Collection(collection)
+	cursor, err := coll.Find(ctx,
+		bson.D{
+			{"openTime", bson.D{{"$gt", startTime}, {"$lt", endTime}}},
+			{"closeTime", bson.D{{"$gt", startTime}, {"$lt", endTime}}},
+			{"symbol", bson.D{{"$eq", symbol}}},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	var trades []domain.Trade
+	err = cursor.All(ctx, &trades)
+	if err != nil {
+		return nil, err
+	}
+	return trades, nil
+}

@@ -9,6 +9,7 @@ type getter interface {
 	Get(ctx context.Context, id string) (Trade, error)
 	GetAll(ctx context.Context) ([]Trade, error)
 	GetRange(ctx context.Context, startTime, endTime time.Time) ([]Trade, error)
+	GetRangeAndSymbol(ctx context.Context, startTime, endTime time.Time, symbol string) ([]Trade, error)
 }
 
 type Service struct {
@@ -31,4 +32,8 @@ func (s Service) Get(ctx context.Context, id string) (Trade, error) {
 
 func (s Service) GetRange(ctx context.Context, startTime, endTime time.Time) ([]Trade, error) {
 	return s.repo.GetRange(ctx, startTime, endTime)
+}
+
+func (s Service) GetFiltered(ctx context.Context, filter Filter) ([]Trade, error) {
+	return s.repo.GetRangeAndSymbol(ctx, filter.StartTime, filter.EndTime, filter.Symbol)
 }

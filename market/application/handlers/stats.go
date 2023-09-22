@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"market/market/application/service"
+	"market/market/domain"
 	"market/market/domain/statistics"
 	"net/http"
 	"time"
@@ -11,6 +12,7 @@ import (
 type statsQuery struct {
 	StartTime string `json:"startTime"`
 	EndTime   string `json:"endTime"`
+	Symbol    string `json:"symbol"`
 }
 
 func Stats(trd service.Trades) gin.HandlerFunc {
@@ -34,7 +36,13 @@ func Stats(trd service.Trades) gin.HandlerFunc {
 			return
 		}
 
-		trades, err := trd.GetRange(ctx, startTime, endTime)
+		filter := domain.Filter{
+			StartTime: startTime,
+			EndTime:   endTime,
+			Symbol:    sq.Symbol,
+		}
+
+		trades, err := trd.GetFiltered(ctx, filter)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return

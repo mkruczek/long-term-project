@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"market/market/domain"
 	"market/market/domain/statistics"
 	"testing"
@@ -99,6 +100,41 @@ func TestCalculate_bestTrade_worstTrade(t *testing.T) {
 
 			if summary.WorstTrade.Profit != tc.worstProfit {
 				t.Errorf("Expected worst trade to be %v, got %v", tc.worstProfit, summary.WorstTrade.Profit)
+			}
+		})
+	}
+}
+
+func TestCalculate_stats_by_symbol(t *testing.T) {
+
+	testCases := []struct {
+		name     string
+		trades   []domain.Trade
+		expected statistics.Summary
+	}{
+		{name: "one pair with three trades", trades: []domain.Trade{
+			{Symbol: "EURUSD", Profit: 10},
+			{Symbol: "EURUSD", Profit: 20},
+			{Symbol: "EURUSD", Profit: 30},
+		},
+			expected: statistics.Summary{
+				BySymbol: map[string]statistics.BySymbol{
+					"EURUSD": {Profit: 60, AverageProfit: 20, Amount: 3, PercentOfAll: 100},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			summary := statistics.Calculate(tc.trades)
+			if len(summary.BySymbol) != len(tc.expected.BySymbol) {
+				t.Errorf("Expected %d symbols, got %d", len(tc.expected.BySymbol), len(summary.BySymbol))
+			}
+			for k, v := range summary.BySymbol {
+				if !cmp.Equal(v, tc.expected.BySymbol[k]) {
+					t.Errorf("Expected %v, got %v", tc.expected.BySymbol[k], v)
+				}
 			}
 		})
 	}
