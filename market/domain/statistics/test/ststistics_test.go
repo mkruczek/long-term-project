@@ -123,6 +123,17 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 				},
 			},
 		},
+		{name: "two pairs with three trades", trades: []domain.Trade{
+			{Symbol: "EURUSD", Profit: 10}, {Symbol: "EURUSD", Profit: 20}, {Symbol: "EURUSD", Profit: 30},
+			{Symbol: "EURGBP", Profit: 10}, {Symbol: "EURGBP", Profit: 20}, {Symbol: "EURGBP", Profit: 30},
+		},
+			expected: statistics.Summary{
+				BySymbol: map[string]statistics.BySymbol{
+					"EURUSD": {Profit: 60, AverageProfit: 20, Amount: 3, PercentOfAll: 50},
+					"EURGBP": {Profit: 60, AverageProfit: 20, Amount: 3, PercentOfAll: 50},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {

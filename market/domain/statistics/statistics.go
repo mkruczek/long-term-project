@@ -4,6 +4,7 @@ package statistics
 import (
 	"context"
 	"github.com/jinzhu/copier"
+	"log/slog"
 	"market/market/domain"
 	"market/market/infrastructure/log"
 	"math"
@@ -70,15 +71,18 @@ func Calculate(trades []domain.Trade) Summary {
 }
 
 func profit(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+	slog.Info("start calculating profit")
 	defer wg.Done()
 	var result int
 	for _, trade := range trades {
 		result += trade.Profit
 	}
 	resultChan <- Summary{Profit: result}
+	slog.Info("end calculating profit")
 }
 
 func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+	slog.Info("start calculating best trade")
 	defer wg.Done()
 	best := domain.Trade{
 		Profit: math.MinInt64,
@@ -90,9 +94,11 @@ func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summ
 		}
 	}
 	resultChan <- Summary{BestTrade: best}
+	slog.Info("end calculating best trade")
 }
 
 func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+	slog.Info("start calculating worst trade")
 	defer wg.Done()
 	worst := domain.Trade{
 		Profit: math.MaxInt64,
@@ -103,9 +109,11 @@ func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Sum
 		}
 	}
 	resultChan <- Summary{WorstTrade: worst}
+	slog.Info("end calculating worst trade")
 }
 
 func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+	slog.Info("start calculating by symbol")
 	defer wg.Done()
 
 	tmp := make(map[string][]domain.Trade, len(trades))
@@ -131,4 +139,5 @@ func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan cha
 		}(s, t)
 	}
 	innerWg.Wait()
+	slog.Info("end calculating by symbol")
 }

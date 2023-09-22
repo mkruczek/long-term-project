@@ -35,5 +35,8 @@ func (s Service) GetRange(ctx context.Context, startTime, endTime time.Time) ([]
 }
 
 func (s Service) GetFiltered(ctx context.Context, filter Filter) ([]Trade, error) {
+	if filter.Symbol == "" {
+		return s.repo.GetRange(ctx, filter.StartTime, filter.EndTime)
+	}
 	return s.repo.GetRangeAndSymbol(ctx, filter.StartTime, filter.EndTime, filter.Symbol)
 }
