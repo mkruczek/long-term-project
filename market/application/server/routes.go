@@ -19,4 +19,8 @@ func (svr *Server) Routes() {
 	// statistic part
 	statsGroup := mainGroup.Group("/stats")
 	statsGroup.POST("", handlers.Stats(svr.services.trades))
+
+	//create image
+	imageGroup := mainGroup.Group("/image")
+	imageGroup.GET("", handlers.CreateImage(svr.services.trades))
 }
