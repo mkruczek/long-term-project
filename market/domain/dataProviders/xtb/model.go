@@ -78,6 +78,7 @@ func (csv CSV) ToDomainModel() (domain.Trade, error) {
 	}
 
 	result.CalculateProfit()
+	result.CalculateSimplifiedResult()
 
 	return result, nil
 }
