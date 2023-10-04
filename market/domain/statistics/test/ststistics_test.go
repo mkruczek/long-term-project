@@ -4,6 +4,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"market/market/domain"
 	"market/market/domain/statistics"
+	"math"
 	"testing"
 )
 
@@ -146,6 +147,36 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 				if !cmp.Equal(v, tc.expected.BySymbol[k]) {
 					t.Errorf("Expected %v, got %v", tc.expected.BySymbol[k], v)
 				}
+			}
+		})
+	}
+}
+
+func Test_winLossRatio(t *testing.T) {
+	testCases := []struct {
+		name          string
+		trades        []domain.Trade
+		expectedRatio float64
+	}{
+		{name: "nil", trades: nil, expectedRatio: 0},
+		{name: "empty", trades: []domain.Trade{}, expectedRatio: 0},
+		{name: "one win trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}}, expectedRatio: 1},
+		{name: "one loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Loss}}, expectedRatio: 0},
+		{name: "one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.BreakEven}}, expectedRatio: 0},
+		{name: "one win and one loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.5},
+		{name: "one win and one loss and one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.BreakEven}}, expectedRatio: 0.5},
+		{name: "two win and one loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.67},
+		{name: "two win and one loss and one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.BreakEven}}, expectedRatio: 0.67},
+		{name: "two win and two loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.5},
+		{name: "two win and two loss and one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.BreakEven}}, expectedRatio: 0.5},
+		{name: "one win and two loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.33},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			summary := statistics.Calculate(tc.trades)
+			if math.Round(summary.WinLossRatio*100)/100 != tc.expectedRatio {
+				t.Errorf("Expected winLossRatio to be %v, got %v", tc.expectedRatio, summary.WinLossRatio)
 			}
 		})
 	}

@@ -17,6 +17,9 @@ type Summary struct {
 	// AverageProfit is the average profit rounded to the nearest integer
 	// I chose to round to the nearest integer because at the end this is result in points, not pips
 	AverageProfit int `json:"averageProfit"`
+	// WinLossRatio is the ratio of winning trades to losing trades
+	// warning! break even trades are not taken into account
+	WinLossRatio float64 `json:"winLossRatio"`
 	// BestTrade is the trade with the highest profit
 	BestTrade domain.Trade `json:"bestTrade"`
 	// WorstTrade is the trade with the lowest profit
@@ -43,7 +46,7 @@ func Calculate(trades []domain.Trade) Summary {
 		return Summary{}
 	}
 
-	const operations = 4
+	const operations = 5
 
 	resultChan := make(chan Summary, operations)
 	wg := &sync.WaitGroup{}
@@ -53,6 +56,7 @@ func Calculate(trades []domain.Trade) Summary {
 	go bestTrade(wg, trades, resultChan)
 	go worstTrade(wg, trades, resultChan)
 	go calculateBySymbol(wg, trades, resultChan)
+	go winLossRatio(wg, trades, resultChan)
 
 	wg.Wait()
 	close(resultChan)
@@ -155,4 +159,32 @@ func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan cha
 
 	resultChan <- result
 	slog.Debug("end calculating by symbol")
+}
+
+func winLossRatio(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+	slog.Debug("start calculating win loss ratio")
+	defer wg.Done()
+	var win, loss, breakeven float64
+	for _, trade := range trades {
+		switch trade.SimplifiedResult {
+		case domain.Win:
+			win++
+		case domain.Loss:
+			loss++
+		case domain.BreakEven: //todo? how to handle breakeven? for now i just ignore it
+			breakeven++
+		}
+	}
+
+	s := Summary{}
+	switch {
+	case int(breakeven) == len(trades):
+		s.WinLossRatio = 0
+	case loss == 0:
+		s.WinLossRatio = 1
+	default:
+		s.WinLossRatio = win / (win + loss)
+	}
+	resultChan <- s
+	slog.Debug("end calculating win loss ratio")
 }
