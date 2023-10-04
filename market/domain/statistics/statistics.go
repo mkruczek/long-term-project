@@ -43,10 +43,12 @@ func Calculate(trades []domain.Trade) Summary {
 		return Summary{}
 	}
 
-	resultChan := make(chan Summary, 4)
+	const operations = 4
+
+	resultChan := make(chan Summary, operations)
 	wg := &sync.WaitGroup{}
 
-	wg.Add(4)
+	wg.Add(operations)
 	go profit(wg, trades, resultChan)
 	go bestTrade(wg, trades, resultChan)
 	go worstTrade(wg, trades, resultChan)
@@ -71,18 +73,18 @@ func Calculate(trades []domain.Trade) Summary {
 }
 
 func profit(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
-	slog.Info("start calculating profit")
+	slog.Debug("start calculating profit")
 	defer wg.Done()
 	var result int
 	for _, trade := range trades {
 		result += trade.Profit
 	}
 	resultChan <- Summary{Profit: result}
-	slog.Info("end calculating profit")
+	slog.Debug("end calculating profit")
 }
 
 func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
-	slog.Info("start calculating best trade")
+	slog.Debug("start calculating best trade")
 	defer wg.Done()
 	best := domain.Trade{
 		Profit: math.MinInt64,
@@ -94,11 +96,11 @@ func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summ
 		}
 	}
 	resultChan <- Summary{BestTrade: best}
-	slog.Info("end calculating best trade")
+	slog.Debug("end calculating best trade")
 }
 
 func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
-	slog.Info("start calculating worst trade")
+	slog.Debug("start calculating worst trade")
 	defer wg.Done()
 	worst := domain.Trade{
 		Profit: math.MaxInt64,
@@ -109,11 +111,11 @@ func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Sum
 		}
 	}
 	resultChan <- Summary{WorstTrade: worst}
-	slog.Info("end calculating worst trade")
+	slog.Debug("end calculating worst trade")
 }
 
 func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
-	slog.Info("start calculating by symbol")
+	slog.Debug("start calculating by symbol")
 	defer wg.Done()
 
 	tmp := make(map[string][]domain.Trade, len(trades))
@@ -124,8 +126,15 @@ func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan cha
 	innerWg := &sync.WaitGroup{}
 	innerWg.Add(len(tmp))
 
+	type innerSummary struct {
+		symbol   string
+		bySymbol BySymbol
+	}
+
+	innerChan := make(chan innerSummary, len(tmp))
+
 	for s, t := range tmp {
-		go func(symbol string, trades []domain.Trade) {
+		go func(symbol string, trades []domain.Trade, allTrades int) {
 			defer innerWg.Done()
 
 			var profit int
@@ -133,11 +142,17 @@ func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan cha
 				profit += trade.Profit
 			}
 
-			resultChan <- Summary{BySymbol: map[string]BySymbol{
-				symbol: {Profit: profit, AverageProfit: int(math.Round(float64(profit) / float64(len(trades)))), Amount: len(trades), PercentOfAll: int(math.Round(float64(len(trades)) / float64(len(trades)) * 100))}},
-			}
-		}(s, t)
+			innerChan <- innerSummary{symbol: symbol, bySymbol: BySymbol{Profit: profit, AverageProfit: int(math.Round(float64(profit) / float64(len(trades)))), Amount: len(trades), PercentOfAll: int(math.Round(float64(len(trades)) / float64(allTrades) * 100))}}
+		}(s, t, len(trades))
 	}
 	innerWg.Wait()
-	slog.Info("end calculating by symbol")
+	close(innerChan)
+
+	result := Summary{BySymbol: make(map[string]BySymbol, len(tmp))}
+	for r := range innerChan {
+		result.BySymbol[r.symbol] = r.bySymbol
+	}
+
+	resultChan <- result
+	slog.Debug("end calculating by symbol")
 }

@@ -48,6 +48,12 @@ func Stats(trd service.Trades) gin.HandlerFunc {
 			return
 		}
 
+		//todo! fix me: dirty hack to fill empty field trade.SimplifiedResult
+		// fix this with migration
+		for _, t := range trades {
+			t.CalculateSimplifiedResult()
+		}
+
 		sts := statistics.Calculate(trades)
 
 		c.JSON(http.StatusOK, sts)
