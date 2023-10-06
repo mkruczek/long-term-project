@@ -10,6 +10,8 @@ import (
 
 const reg = `\.[a-zA-Z_]+`
 
+//todo? it is possible to do this is asynchronous way? i know that simply answer is yes(channel and forget about message :D), but how to do this in proper way?
+
 var l *logrus.Logger
 
 func Init(level string) {
