@@ -58,8 +58,10 @@ func Calculate(trades []domain.Trade) Summary {
 	go calculateBySymbol(wg, trades, resultChan)
 	go winLossRatio(wg, trades, resultChan)
 
-	wg.Wait()
-	close(resultChan)
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
 
 	var result Summary
 	for r := range resultChan {
