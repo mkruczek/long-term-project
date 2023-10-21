@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"market/market/domain"
-	"market/market/infrastructure/log"
+	"market/market/libs/log"
 	"time"
 )
 
