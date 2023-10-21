@@ -1,7 +1,7 @@
 package test
 
 import (
-	"market/market/domain/fxmoney"
+	"market/market/libs/fxmoney"
 	"testing"
 )
 

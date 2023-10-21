@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"market/market/domain/fxmoney"
+	"market/market/libs/fxmoney"
 	"time"
 )
 

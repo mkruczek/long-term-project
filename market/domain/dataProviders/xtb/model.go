@@ -3,7 +3,7 @@ package xtb
 import (
 	"fmt"
 	"market/market/domain"
-	"market/market/domain/fxmoney"
+	"market/market/libs/fxmoney"
 	"time"
 )
 
