@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/copier"
 	"log/slog"
 	"market/market/domain"
-	"market/market/infrastructure/log"
+	"market/market/libs/log"
 	"math"
 	"sync"
 )
