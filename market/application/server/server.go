@@ -2,11 +2,11 @@ package server
 
 import (
 	"context"
-	"market/market/infrastructure/baseServer"
-	"market/market/infrastructure/config"
-	"market/market/infrastructure/healthReady"
-	"market/market/infrastructure/log"
-	"market/market/infrastructure/mongo"
+	"market/market/libs/baseServer"
+	"market/market/libs/config"
+	"market/market/libs/healthReady"
+	"market/market/libs/log"
+	"market/market/libs/mongo"
 )
 
 type Server struct {

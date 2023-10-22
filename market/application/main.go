@@ -5,8 +5,8 @@ import (
 	"market/market/application/server"
 	"market/market/domain"
 	"market/market/domain/dataProviders/xtb"
-	"market/market/infrastructure/log"
-	"market/market/infrastructure/mongo"
+	"market/market/libs/log"
+	"market/market/libs/mongo"
 )
 
 func main() {
