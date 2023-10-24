@@ -53,6 +53,7 @@ type Trade struct {
 	// this value is more important than the profit in fxmoney for me.
 	// if negative, it means a loss.
 	Profit int `json:"profit" bson:"profit"`
+	// Deprecated
 	// SimplifiedResult is simply the result of the trade.
 	// it can be win, loss, or break even.
 	SimplifiedResult TradeResult `json:"result" bson:"result"`
