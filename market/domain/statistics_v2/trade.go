@@ -8,9 +8,9 @@ import (
 type tradeSide int8
 
 const (
-	UndefinedSide tradeSide = iota
-	Buy
-	Sell
+	undefinedSide tradeSide = iota
+	buy
+	sell
 )
 
 const breakEvenDeviation = 20
@@ -18,21 +18,21 @@ const breakEvenDeviation = 20
 type tradeResult int8
 
 const (
-	UndefinedResult tradeResult = iota
-	Win
-	Loss
-	BreakEven
+	undefinedResult tradeResult = iota
+	win
+	loss
+	breakEven
 )
 
 // Trade - internal representation of a Trade, for now entirely base on domain.Trade
 type Trade struct {
-	ID               string
-	Symbol           string
-	TradeSide        tradeSide
-	OpenPrice        fxmoney.Price
-	OpenTime         time.Time
-	ClosePrice       fxmoney.Price
-	CloseTime        time.Time
-	Profit           int
-	SimplifiedResult tradeResult
+	id               string
+	symbol           string
+	tradeSide        tradeSide
+	openPrice        fxmoney.Price
+	openTime         time.Time
+	closePrice       fxmoney.Price
+	closeTime        time.Time
+	profit           int
+	simplifiedResult tradeResult
 }

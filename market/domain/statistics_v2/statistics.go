@@ -10,7 +10,7 @@ import (
 	"sync"
 )
 
-func Calculate(trades []Trade) Summary {
+func calculate(trades []Trade) Summary {
 
 	if len(trades) == 0 {
 		return Summary{}
@@ -53,7 +53,7 @@ func profit(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary) {
 	defer wg.Done()
 	var result int
 	for _, t := range trades {
-		result += t.Profit
+		result += t.profit
 	}
 	resultChan <- Summary{Profit: result}
 	slog.Debug("end calculating profit")
@@ -63,11 +63,11 @@ func bestTrade(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating best Trade")
 	defer wg.Done()
 	best := Trade{
-		Profit: math.MinInt64,
+		profit: math.MinInt64,
 	}
 
 	for _, trade := range trades {
-		if trade.Profit > best.Profit {
+		if trade.profit > best.profit {
 			best = trade
 		}
 	}
@@ -79,10 +79,10 @@ func worstTrade(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating worst Trade")
 	defer wg.Done()
 	worst := Trade{
-		Profit: math.MaxInt64,
+		profit: math.MaxInt64,
 	}
 	for _, trade := range trades {
-		if trade.Profit < worst.Profit {
+		if trade.profit < worst.profit {
 			worst = trade
 		}
 	}
@@ -96,7 +96,7 @@ func calculateBySymbol(wg *sync.WaitGroup, allTrades []Trade, resultChan chan<- 
 
 	tradesBySymbol := make(map[string][]Trade, len(allTrades))
 	for _, t := range allTrades {
-		tradesBySymbol[t.Symbol] = append(tradesBySymbol[t.Symbol], t)
+		tradesBySymbol[t.symbol] = append(tradesBySymbol[t.symbol], t)
 	}
 
 	innerWg := &sync.WaitGroup{}
@@ -115,7 +115,7 @@ func calculateBySymbol(wg *sync.WaitGroup, allTrades []Trade, resultChan chan<- 
 
 			var profit int
 			for _, t := range trades {
-				profit += t.Profit
+				profit += t.profit
 			}
 
 			innerChan <- innerSummary{symbol: symbol, bySymbol: BySymbol{Profit: profit, AverageProfit: int(math.Round(float64(profit) / float64(len(trades)))), Amount: len(trades), PercentOfAll: int(math.Round(float64(len(trades)) / float64(allTrades) * 100))}}
@@ -138,12 +138,12 @@ func winLossRatio(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary)
 	defer wg.Done()
 	var win, loss, breakeven float64
 	for _, t := range trades {
-		switch t.SimplifiedResult {
-		case Win:
+		switch t.simplifiedResult {
+		case win:
 			win++
-		case Loss:
+		case loss:
 			loss++
-		case BreakEven: //todo? how to handle breakeven? for now i just ignore it
+		case breakEven: //todo? how to handle breakeven? for now i just ignore it
 			breakeven++
 		}
 	}
