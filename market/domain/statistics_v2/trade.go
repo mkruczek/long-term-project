@@ -24,8 +24,8 @@ const (
 	breakEven
 )
 
-// Trade - internal representation of a Trade, for now entirely base on domain.Trade
-type Trade struct {
+// trade - internal representation of a trade, for now entirely base on domain.Trade
+type trade struct {
 	id               string
 	symbol           string
 	tradeSide        tradeSide
