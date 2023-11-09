@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"market/market/application/service"
+	"market/market/application/trade/service"
 	"market/market/domain"
 	"market/market/domain/statistics"
 	"market/market/domain/statistics_v2"
@@ -49,8 +49,8 @@ func Stats(trd service.Trades) gin.HandlerFunc {
 			return
 		}
 
-		//todo! fix me: dirty hack to fill empty field trade.SimplifiedResult
-		// fix this with migration
+		//todo!
+		// remove after introducing new statistics microservice
 		for _, t := range trades {
 			t.CalculateSimplifiedResult()
 		}

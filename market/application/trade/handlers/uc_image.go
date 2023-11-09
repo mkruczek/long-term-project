@@ -6,10 +6,14 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
-	"market/market/application/service"
+	"market/market/application/trade/service"
 	"os"
 	"time"
 )
+
+/*
+!! UNDER CONSTRUCTION !!
+*/
 
 var (
 	backgroundColor = color.RGBA{R: 50, G: 50, B: 50, A: 255}

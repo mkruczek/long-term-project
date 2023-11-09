@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"market/market/application/service"
+	"market/market/application/trade/service"
 )
 
 func ListTrades(trades service.Trades) gin.HandlerFunc {

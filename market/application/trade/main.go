@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"market/market/application/server"
+	"market/market/application/trade/server"
 	"market/market/domain"
 	"market/market/domain/dataProviders/xtb"
 	"market/market/libs/config"
