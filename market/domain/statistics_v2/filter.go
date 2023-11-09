@@ -1,4 +1,4 @@
-package domain
+package statistics_v2
 
 import "time"
 

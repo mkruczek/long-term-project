@@ -2,6 +2,8 @@ package config
 
 //todo bring config from yaml
 
+/* MarketApiServer */
+
 func GetMarket() Market {
 	return Market{
 		Http: Http{
@@ -34,4 +36,17 @@ type Mongo struct {
 	Port     string
 	User     string
 	Password string
+}
+
+/* FutureFlag */
+
+func GetFutureFlag() FutureFlag {
+	return FutureFlag{
+		statisticAsDomain: false,
+	}
+}
+
+type FutureFlag struct {
+	//statisticAsDomain is responsible for switching that statistic will be calculated as domain.Trade or it owns internal representation as independent module
+	statisticAsDomain bool
 }

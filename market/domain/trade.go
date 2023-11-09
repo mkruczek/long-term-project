@@ -76,6 +76,7 @@ func (t *Trade) CalculateProfit() {
 }
 
 // CalculateSimplifiedResult calculates the simplified result of the trade.
+// Deprecated
 func (t *Trade) CalculateSimplifiedResult() {
 	switch {
 	case t.Profit > breakEvenDeviation:
