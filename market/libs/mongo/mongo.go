@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"market/market/domain"
+	"market/market/domain/trade"
 	"market/market/libs/log"
 	"time"
 )
@@ -45,7 +45,7 @@ func (c Provider) Ping(ctx context.Context) error {
 	return c.client.Ping(ctx, nil)
 }
 
-func (c Provider) Insert(ctx context.Context, trade domain.Trade) error {
+func (c Provider) Insert(ctx context.Context, trade trade.Trade) error {
 	coll := c.client.Database(dataBase).Collection(collection)
 	_, err := coll.InsertOne(ctx, trade)
 	if err != nil {
@@ -54,7 +54,7 @@ func (c Provider) Insert(ctx context.Context, trade domain.Trade) error {
 	return nil
 }
 
-func (c Provider) BulkInsert(ctx context.Context, trades []domain.Trade) error {
+func (c Provider) BulkInsert(ctx context.Context, trades []trade.Trade) error {
 	coll := c.client.Database(dataBase).Collection(collection)
 	docs := make([]interface{}, len(trades))
 	for i, trade := range trades {
@@ -67,17 +67,17 @@ func (c Provider) BulkInsert(ctx context.Context, trades []domain.Trade) error {
 	return nil
 }
 
-func (c Provider) Get(ctx context.Context, id string) (domain.Trade, error) {
+func (c Provider) Get(ctx context.Context, id string) (trade.Trade, error) {
 	coll := c.client.Database(dataBase).Collection(collection)
-	var trade domain.Trade
-	err := coll.FindOne(ctx, bson.D{{"_id", id}}).Decode(&trade)
+	var t trade.Trade
+	err := coll.FindOne(ctx, bson.D{{"_id", id}}).Decode(&t)
 	if err != nil {
-		return domain.Trade{}, err
+		return trade.Trade{}, err
 	}
-	return trade, nil
+	return t, nil
 }
 
-func (c Provider) Update(ctx context.Context, trade domain.Trade) error {
+func (c Provider) Update(ctx context.Context, trade trade.Trade) error {
 	coll := c.client.Database(dataBase).Collection(collection)
 	_, err := coll.UpdateOne(ctx, bson.D{{"_id", trade.ID}}, trade)
 	if err != nil {
@@ -95,13 +95,13 @@ func (c Provider) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (c Provider) GetAll(ctx context.Context) ([]domain.Trade, error) {
+func (c Provider) GetAll(ctx context.Context) ([]trade.Trade, error) {
 	coll := c.client.Database(dataBase).Collection(collection)
 	cursor, err := coll.Find(ctx, bson.D{{}})
 	if err != nil {
 		return nil, err
 	}
-	var trades []domain.Trade
+	var trades []trade.Trade
 	err = cursor.All(ctx, &trades)
 	if err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ func (c Provider) GetAll(ctx context.Context) ([]domain.Trade, error) {
 	return trades, nil
 }
 
-func (c Provider) GetRange(ctx context.Context, startTime, endTime time.Time) ([]domain.Trade, error) {
+func (c Provider) GetRange(ctx context.Context, startTime, endTime time.Time) ([]trade.Trade, error) {
 	coll := c.client.Database(dataBase).Collection(collection)
 	cursor, err := coll.Find(ctx,
 		bson.D{
@@ -120,7 +120,7 @@ func (c Provider) GetRange(ctx context.Context, startTime, endTime time.Time) ([
 	if err != nil {
 		return nil, err
 	}
-	var trades []domain.Trade
+	var trades []trade.Trade
 	err = cursor.All(ctx, &trades)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (c Provider) GetRange(ctx context.Context, startTime, endTime time.Time) ([
 	return trades, nil
 }
 
-func (c Provider) GetRangeAndSymbol(ctx context.Context, startTime, endTime time.Time, symbol string) ([]domain.Trade, error) {
+func (c Provider) GetRangeAndSymbol(ctx context.Context, startTime, endTime time.Time, symbol string) ([]trade.Trade, error) {
 	coll := c.client.Database(dataBase).Collection(collection)
 	cursor, err := coll.Find(ctx,
 		bson.D{
@@ -140,7 +140,7 @@ func (c Provider) GetRangeAndSymbol(ctx context.Context, startTime, endTime time
 	if err != nil {
 		return nil, err
 	}
-	var trades []domain.Trade
+	var trades []trade.Trade
 	err = cursor.All(ctx, &trades)
 	if err != nil {
 		return nil, err

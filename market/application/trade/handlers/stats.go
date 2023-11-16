@@ -3,9 +3,9 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"market/market/application/trade/service"
-	"market/market/domain"
 	"market/market/domain/statistics"
 	"market/market/domain/statistics_v2"
+	"market/market/domain/trade"
 	"net/http"
 	"time"
 )
@@ -37,7 +37,7 @@ func Stats(trd service.Trades) gin.HandlerFunc {
 			return
 		}
 
-		filter := domain.Filter{
+		filter := trade.Filter{
 			StartTime: startTime,
 			EndTime:   endTime,
 			Symbol:    sq.Symbol,

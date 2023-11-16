@@ -5,7 +5,7 @@ import (
 	"context"
 	"github.com/jinzhu/copier"
 	"log/slog"
-	"market/market/domain"
+	"market/market/domain/trade"
 	"market/market/libs/log"
 	"math"
 	"sync"
@@ -21,9 +21,9 @@ type Summary struct {
 	// warning! break even trades are not taken into account
 	WinLossRatio float64 `json:"winLossRatio"`
 	// BestTrade is the trade with the highest profit
-	BestTrade domain.Trade `json:"bestTrade"`
+	BestTrade trade.Trade `json:"bestTrade"`
 	// WorstTrade is the trade with the lowest profit
-	WorstTrade domain.Trade `json:"worstTrade"`
+	WorstTrade trade.Trade `json:"worstTrade"`
 	// BySymbol shows statistics for each symbol
 	BySymbol map[string]BySymbol `json:"bySymbol"`
 }
@@ -40,7 +40,7 @@ type BySymbol struct {
 	PercentOfAll int `json:"percentOfAll"`
 }
 
-func Calculate(trades []domain.Trade) Summary {
+func Calculate(trades []trade.Trade) Summary {
 
 	if len(trades) == 0 {
 		return Summary{}
@@ -78,7 +78,7 @@ func Calculate(trades []domain.Trade) Summary {
 	return result
 }
 
-func profit(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+func profit(wg *sync.WaitGroup, trades []trade.Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating profit")
 	defer wg.Done()
 	var result int
@@ -89,10 +89,10 @@ func profit(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary
 	slog.Debug("end calculating profit")
 }
 
-func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+func bestTrade(wg *sync.WaitGroup, trades []trade.Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating best trade")
 	defer wg.Done()
-	best := domain.Trade{
+	best := trade.Trade{
 		Profit: math.MinInt64,
 	}
 
@@ -105,10 +105,10 @@ func bestTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summ
 	slog.Debug("end calculating best trade")
 }
 
-func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+func worstTrade(wg *sync.WaitGroup, trades []trade.Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating worst trade")
 	defer wg.Done()
-	worst := domain.Trade{
+	worst := trade.Trade{
 		Profit: math.MaxInt64,
 	}
 	for _, trade := range trades {
@@ -120,11 +120,11 @@ func worstTrade(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Sum
 	slog.Debug("end calculating worst trade")
 }
 
-func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+func calculateBySymbol(wg *sync.WaitGroup, trades []trade.Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating by symbol")
 	defer wg.Done()
 
-	tmp := make(map[string][]domain.Trade, len(trades))
+	tmp := make(map[string][]trade.Trade, len(trades))
 	for _, trade := range trades {
 		tmp[trade.Symbol] = append(tmp[trade.Symbol], trade)
 	}
@@ -140,7 +140,7 @@ func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan cha
 	innerChan := make(chan innerSummary, len(tmp))
 
 	for s, t := range tmp {
-		go func(symbol string, trades []domain.Trade, allTrades int) {
+		go func(symbol string, trades []trade.Trade, allTrades int) {
 			defer innerWg.Done()
 
 			var profit int
@@ -163,17 +163,17 @@ func calculateBySymbol(wg *sync.WaitGroup, trades []domain.Trade, resultChan cha
 	slog.Debug("end calculating by symbol")
 }
 
-func winLossRatio(wg *sync.WaitGroup, trades []domain.Trade, resultChan chan<- Summary) {
+func winLossRatio(wg *sync.WaitGroup, trades []trade.Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating win loss ratio")
 	defer wg.Done()
 	var win, loss, breakeven float64
-	for _, trade := range trades {
-		switch trade.SimplifiedResult {
-		case domain.Win:
+	for _, t := range trades {
+		switch t.SimplifiedResult {
+		case trade.Win:
 			win++
-		case domain.Loss:
+		case trade.Loss:
 			loss++
-		case domain.BreakEven: //todo? how to handle breakeven? for now i just ignore it
+		case trade.BreakEven: //todo? how to handle breakeven? for now i just ignore it
 			breakeven++
 		}
 	}

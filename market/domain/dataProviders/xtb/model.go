@@ -2,7 +2,7 @@ package xtb
 
 import (
 	"fmt"
-	"market/market/domain"
+	"market/market/domain/trade"
 	"market/market/libs/fxmoney"
 	"time"
 )
@@ -32,41 +32,41 @@ type CSV struct {
 	NetProfit float64 `csv:"Net profit"`
 }
 
-func (csv CSV) ToDomainModel() (domain.Trade, error) {
+func (csv CSV) ToDomainModel() (trade.Trade, error) {
 
 	openTime, err := parseTime(csv.OpenTime)
 	if err != nil {
-		return domain.Trade{}, err
+		return trade.Trade{}, err
 	}
 
 	closeTime, err := parseTime(csv.CloseTime)
 	if err != nil {
-		return domain.Trade{}, err
+		return trade.Trade{}, err
 	}
 
 	currency := csv.Symbol[3:]
 
 	openPrice, err := fxmoney.NewPrice(csv.OpenPrice, currency)
 	if err != nil {
-		return domain.Trade{}, err
+		return trade.Trade{}, err
 	}
 
 	closePrice, err := fxmoney.NewPrice(csv.ClosePrice, currency)
 	if err != nil {
-		return domain.Trade{}, err
+		return trade.Trade{}, err
 	}
 
-	var tradeSide domain.TradeSide
+	var tradeSide trade.TradeSide
 	switch csv.Type {
 	case "Buy", "Buy Stop", "Buy Limit":
-		tradeSide = domain.Buy
+		tradeSide = trade.Buy
 	case "Sell", "Sell Stop", "Sell Limit":
-		tradeSide = domain.Sell
+		tradeSide = trade.Sell
 	default:
-		return domain.Trade{}, fmt.Errorf("unknown trade type: %s", csv.Type)
+		return trade.Trade{}, fmt.Errorf("unknown trade type: %s", csv.Type)
 	}
 
-	result := domain.Trade{
+	result := trade.Trade{
 		ID:         csv.Position,
 		Symbol:     csv.Symbol,
 		TradeSide:  tradeSide,

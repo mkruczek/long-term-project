@@ -1,4 +1,4 @@
-package domain
+package trade
 
 import (
 	"market/market/libs/fxmoney"

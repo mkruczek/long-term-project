@@ -2,14 +2,14 @@ package test
 
 import (
 	"context"
-	"market/market/domain"
 	"market/market/domain/dataProviders/xtb"
+	"market/market/domain/trade"
 	"testing"
 )
 
-type dummyRepository map[string]domain.Trade
+type dummyRepository map[string]trade.Trade
 
-func (d dummyRepository) BulkInsert(ctx context.Context, trades []domain.Trade) error {
+func (d dummyRepository) BulkInsert(ctx context.Context, trades []trade.Trade) error {
 	for _, t := range trades {
 		d[t.ID] = t
 	}
@@ -31,7 +31,7 @@ func Test_Provider(t *testing.T) {
 
 	dummyRepo := dummyRepository{}
 
-	p := domain.NewProvider[*xtb.CSV](dummyRepo)
+	p := trade.NewProvider[*xtb.CSV](dummyRepo)
 
 	err := p.BulkInsert(ctx, data)
 	if err != nil {

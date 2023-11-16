@@ -2,7 +2,7 @@ package statistics_v2
 
 import (
 	"context"
-	"market/market/domain"
+	aclTrade "market/market/domain/trade"
 	"market/market/libs/mongo"
 )
 
@@ -11,7 +11,7 @@ type tradesRepository struct {
 }
 
 func (r *tradesRepository) GetTrades(ctx context.Context, filter Filter) ([]trade, error) {
-	var domainTrades []domain.Trade
+	var domainTrades []aclTrade.Trade
 	var err error
 	if filter.Symbol == "" {
 		domainTrades, err = r.db.GetRange(ctx, filter.StartTime, filter.EndTime)
@@ -26,7 +26,7 @@ func (r *tradesRepository) GetTrades(ctx context.Context, filter Filter) ([]trad
 	return domainToTrade(domainTrades), nil
 }
 
-func domainToTrade(domainTrades []domain.Trade) []trade {
+func domainToTrade(domainTrades []aclTrade.Trade) []trade {
 	trades := make([]trade, len(domainTrades))
 	for i, t := range domainTrades {
 		trades[i] = trade{

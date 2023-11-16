@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"market/market/application/trade/server"
-	"market/market/domain"
 	"market/market/domain/dataProviders/xtb"
+	"market/market/domain/trade"
 	"market/market/libs/config"
 	"market/market/libs/log"
 	"market/market/libs/mongo"
@@ -21,8 +21,8 @@ func main() {
 		log.Fatalf(mainCtx, "can`t create mongo provider: %s", err)
 	}
 
-	xtbProv := domain.NewProvider[*xtb.CSV](mongoDB)
-	tradeSrv := domain.NewService(mongoDB)
+	xtbProv := trade.NewProvider[*xtb.CSV](mongoDB)
+	tradeSrv := trade.NewService(mongoDB)
 
 	appServices := server.NewAppServices(tradeSrv, xtbProv)
 

@@ -6,14 +6,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
 	"io"
-	"market/market/domain"
 	"market/market/domain/dataProviders/xtb"
+	"market/market/domain/trade"
 
 	"net/http"
 	"os"
 )
 
-func XtbUpload(provider domain.Provider[*xtb.CSV]) func(c *gin.Context) {
+func XtbUpload(provider trade.Provider[*xtb.CSV]) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		if err := c.Request.ParseMultipartForm(5 * 1024 * 1024); err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("parse form err: %s", err))

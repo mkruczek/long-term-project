@@ -2,8 +2,8 @@ package test
 
 import (
 	"github.com/google/go-cmp/cmp"
-	"market/market/domain"
 	"market/market/domain/statistics"
+	"market/market/domain/trade"
 	"math"
 	"testing"
 )
@@ -11,7 +11,7 @@ import (
 func TestCalculate_Profit_AvrProfit(t *testing.T) {
 	testCases := []struct {
 		name    string
-		trades  []domain.Trade
+		trades  []trade.Trade
 		profit  int
 		average int
 	}{
@@ -23,13 +23,13 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 		},
 		{
 			name:    "empty",
-			trades:  []domain.Trade{},
+			trades:  []trade.Trade{},
 			profit:  0,
 			average: 0,
 		},
 		{
 			name: "simple trades",
-			trades: []domain.Trade{
+			trades: []trade.Trade{
 				{Profit: 10},
 				{Profit: 20},
 				{Profit: 30},
@@ -39,7 +39,7 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 		},
 		{
 			name: "trades with decimal up rounding",
-			trades: []domain.Trade{
+			trades: []trade.Trade{
 				{Profit: 100},
 				{Profit: 100},
 				{Profit: 105},
@@ -49,7 +49,7 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 		},
 		{
 			name: "trades with decimal down rounding",
-			trades: []domain.Trade{
+			trades: []trade.Trade{
 				{Profit: 100},
 				{Profit: 100},
 				{Profit: 104},
@@ -78,17 +78,17 @@ func TestCalculate_bestTrade_worstTrade(t *testing.T) {
 
 	testCases := []struct {
 		name        string
-		trades      []domain.Trade
+		trades      []trade.Trade
 		bestProfit  int
 		worstProfit int
 	}{
 		{name: "nil", trades: nil, bestProfit: 0, worstProfit: 0},
-		{name: "empty", trades: []domain.Trade{}, bestProfit: 0, worstProfit: 0},
-		{name: "one trade", trades: []domain.Trade{{Profit: 10}}, bestProfit: 10, worstProfit: 10},
-		{name: "simple trades", trades: []domain.Trade{{Profit: -10}, {Profit: 20}, {Profit: 30}}, bestProfit: 30, worstProfit: -10},
-		{name: "all trades are equal", trades: []domain.Trade{{Profit: 10}, {Profit: 10}, {Profit: 10}}, bestProfit: 10, worstProfit: 10},
-		{name: "all are in plus", trades: []domain.Trade{{Profit: 10}, {Profit: 20}, {Profit: 30}}, bestProfit: 30, worstProfit: 10},
-		{name: "all are in minus", trades: []domain.Trade{{Profit: -10}, {Profit: -20}, {Profit: -30}}, bestProfit: -10, worstProfit: -30},
+		{name: "empty", trades: []trade.Trade{}, bestProfit: 0, worstProfit: 0},
+		{name: "one trade", trades: []trade.Trade{{Profit: 10}}, bestProfit: 10, worstProfit: 10},
+		{name: "simple trades", trades: []trade.Trade{{Profit: -10}, {Profit: 20}, {Profit: 30}}, bestProfit: 30, worstProfit: -10},
+		{name: "all trades are equal", trades: []trade.Trade{{Profit: 10}, {Profit: 10}, {Profit: 10}}, bestProfit: 10, worstProfit: 10},
+		{name: "all are in plus", trades: []trade.Trade{{Profit: 10}, {Profit: 20}, {Profit: 30}}, bestProfit: 30, worstProfit: 10},
+		{name: "all are in minus", trades: []trade.Trade{{Profit: -10}, {Profit: -20}, {Profit: -30}}, bestProfit: -10, worstProfit: -30},
 	}
 
 	for _, tc := range testCases {
@@ -110,10 +110,10 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		trades   []domain.Trade
+		trades   []trade.Trade
 		expected statistics.Summary
 	}{
-		{name: "one pair with three trades", trades: []domain.Trade{
+		{name: "one pair with three trades", trades: []trade.Trade{
 			{Symbol: "EURUSD", Profit: 10},
 			{Symbol: "EURUSD", Profit: 20},
 			{Symbol: "EURUSD", Profit: 30},
@@ -124,7 +124,7 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 				},
 			},
 		},
-		{name: "two pairs with three trades", trades: []domain.Trade{
+		{name: "two pairs with three trades", trades: []trade.Trade{
 			{Symbol: "EURUSD", Profit: 10}, {Symbol: "EURUSD", Profit: 20}, {Symbol: "EURUSD", Profit: 30},
 			{Symbol: "EURGBP", Profit: 10}, {Symbol: "EURGBP", Profit: 20}, {Symbol: "EURGBP", Profit: 30},
 		},
@@ -155,21 +155,21 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 func Test_winLossRatio(t *testing.T) {
 	testCases := []struct {
 		name          string
-		trades        []domain.Trade
+		trades        []trade.Trade
 		expectedRatio float64
 	}{
 		{name: "nil", trades: nil, expectedRatio: 0},
-		{name: "empty", trades: []domain.Trade{}, expectedRatio: 0},
-		{name: "one win trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}}, expectedRatio: 1},
-		{name: "one loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Loss}}, expectedRatio: 0},
-		{name: "one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.BreakEven}}, expectedRatio: 0},
-		{name: "one win and one loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.5},
-		{name: "one win and one loss and one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.BreakEven}}, expectedRatio: 0.5},
-		{name: "two win and one loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.67},
-		{name: "two win and one loss and one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.BreakEven}}, expectedRatio: 0.67},
-		{name: "two win and two loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.5},
-		{name: "two win and two loss and one breakeven trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.BreakEven}}, expectedRatio: 0.5},
-		{name: "one win and two loss trade", trades: []domain.Trade{{SimplifiedResult: domain.Win}, {SimplifiedResult: domain.Loss}, {SimplifiedResult: domain.Loss}}, expectedRatio: 0.33},
+		{name: "empty", trades: []trade.Trade{}, expectedRatio: 0},
+		{name: "one win trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}}, expectedRatio: 1},
+		{name: "one loss trade", trades: []trade.Trade{{SimplifiedResult: trade.Loss}}, expectedRatio: 0},
+		{name: "one breakeven trade", trades: []trade.Trade{{SimplifiedResult: trade.BreakEven}}, expectedRatio: 0},
+		{name: "one win and one loss trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Loss}}, expectedRatio: 0.5},
+		{name: "one win and one loss and one breakeven trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Loss}, {SimplifiedResult: trade.BreakEven}}, expectedRatio: 0.5},
+		{name: "two win and one loss trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Loss}}, expectedRatio: 0.67},
+		{name: "two win and one loss and one breakeven trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Loss}, {SimplifiedResult: trade.BreakEven}}, expectedRatio: 0.67},
+		{name: "two win and two loss trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Loss}, {SimplifiedResult: trade.Loss}}, expectedRatio: 0.5},
+		{name: "two win and two loss and one breakeven trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Loss}, {SimplifiedResult: trade.Loss}, {SimplifiedResult: trade.BreakEven}}, expectedRatio: 0.5},
+		{name: "one win and two loss trade", trades: []trade.Trade{{SimplifiedResult: trade.Win}, {SimplifiedResult: trade.Loss}, {SimplifiedResult: trade.Loss}}, expectedRatio: 0.33},
 	}
 
 	for _, tc := range testCases {

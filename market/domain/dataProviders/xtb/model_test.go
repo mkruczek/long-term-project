@@ -3,8 +3,8 @@ package xtb_test
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"market/market/domain"
 	"market/market/domain/dataProviders/xtb"
+	"market/market/domain/trade"
 	"market/market/libs/fxmoney"
 	"testing"
 	"time"
@@ -17,7 +17,7 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 	testCases := []struct {
 		name     string
 		xtbCsv   xtb.CSV
-		expected domain.Trade
+		expected trade.Trade
 	}{
 		{name: "EURUSD-Buy-1PointProfit",
 			xtbCsv: xtb.CSV{
@@ -31,16 +31,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     0, //for single point (1/10 pip) profit is 0
 				NetProfit:  0,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 100005, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100006, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			}},
 		{name: "USDJPY-Buy-1PointProfit",
@@ -55,16 +55,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     1,
 				NetProfit:  1,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "USDJPY",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 123005, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123006, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			}},
 		{name: "EURUSD-Buy-1PointLoss",
@@ -79,16 +79,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     0, //for single point (1/10 pip) loss is 0
 				NetProfit:  0,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 100005, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100004, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -104,16 +104,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     -1,
 				NetProfit:  -1,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "USDJPY",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 123005, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123004, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -129,16 +129,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     10, //for single pip profit
 				NetProfit:  10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 100005, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100015, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -154,16 +154,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     -10, //for single pip profit
 				NetProfit:  -10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 100015, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100005, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -179,16 +179,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     10, //for single pip profit
 				NetProfit:  10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURJPY",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 123005, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123015, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -204,16 +204,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     -10, //for single pip profit
 				NetProfit:  -10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURJPY",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 123015, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123005, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -229,16 +229,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     0, //for single point (1/10 pip) profit is 0
 				NetProfit:  0,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 100015, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100014, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -254,16 +254,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     1,
 				NetProfit:  1,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "USDJPY",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 123015, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123014, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -279,16 +279,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     0, //for single point (1/10 pip) loss is 0
 				NetProfit:  0,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 100015, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100016, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -304,16 +304,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     -1,
 				NetProfit:  -1,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "USDJPY",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 123015, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123016, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -1,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			}},
 		{name: "EURUSD-Sell-1PipProfit",
@@ -328,16 +328,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     10, //for single pip profit
 				NetProfit:  10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 100015, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100005, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -353,16 +353,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     -10, //for single pip profit
 				NetProfit:  -10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURUSD",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 100005, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 100015, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -378,16 +378,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     10, //for single pip profit
 				NetProfit:  10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURJPY",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 123015, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123005, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -403,16 +403,16 @@ func Test_ConvertXtbCsvToDomainModel_BasicValues(t *testing.T) {
 				Profit:     -10, //for single pip profit
 				NetProfit:  -10,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "EURJPY",
-				TradeSide:        domain.Sell,
+				TradeSide:        trade.Sell,
 				OpenPrice:        fxmoney.Price{Amount: 123005, Currency: "JPY"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 123015, Currency: "JPY"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -10,
-				SimplifiedResult: domain.BreakEven,
+				SimplifiedResult: trade.BreakEven,
 				ExternalID:       "12345678",
 			},
 		},
@@ -437,7 +437,7 @@ func Test_ConvertXtbCsvToDomainModel_RealValues(t *testing.T) {
 	testCases := []struct {
 		name     string
 		xtbCsv   xtb.CSV
-		expected domain.Trade
+		expected trade.Trade
 	}{
 		{name: "GBPUSD-Buy-Loss",
 			xtbCsv: xtb.CSV{
@@ -451,16 +451,16 @@ func Test_ConvertXtbCsvToDomainModel_RealValues(t *testing.T) {
 				Profit:     -3.97,
 				NetProfit:  -3.97,
 			},
-			expected: domain.Trade{
+			expected: trade.Trade{
 				ID:               "12345678",
 				Symbol:           "GBPUSD",
-				TradeSide:        domain.Buy,
+				TradeSide:        trade.Buy,
 				OpenPrice:        fxmoney.Price{Amount: 128666, Currency: "USD"},
 				OpenTime:         time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				ClosePrice:       fxmoney.Price{Amount: 128567, Currency: "USD"},
 				CloseTime:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				Profit:           -99,
-				SimplifiedResult: domain.Loss,
+				SimplifiedResult: trade.Loss,
 				ExternalID:       "12345678",
 			}},
 	}
