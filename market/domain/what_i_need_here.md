@@ -1,2 +1,0 @@
-- i think that main domain of this app is **transaction/trade** and will start wih it
-- at the begin i want import CSV models from different providers (mt4, xtd, dukascopy, etc.) and convert it to one format and save it to database
