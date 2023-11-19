@@ -9,7 +9,7 @@ import (
 func TestCalculate_Profit_AvrProfit(t *testing.T) {
 	testCases := []struct {
 		name    string
-		trades  []trade
+		trades  []Trade
 		profit  int
 		average int
 	}{
@@ -21,13 +21,13 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 		},
 		{
 			name:    "empty",
-			trades:  []trade{},
+			trades:  []Trade{},
 			profit:  0,
 			average: 0,
 		},
 		{
 			name: "simple trades",
-			trades: []trade{
+			trades: []Trade{
 				{profit: 10},
 				{profit: 20},
 				{profit: 30},
@@ -37,7 +37,7 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 		},
 		{
 			name: "trades with decimal up rounding",
-			trades: []trade{
+			trades: []Trade{
 				{profit: 100},
 				{profit: 100},
 				{profit: 105},
@@ -47,7 +47,7 @@ func TestCalculate_Profit_AvrProfit(t *testing.T) {
 		},
 		{
 			name: "trades with decimal down rounding",
-			trades: []trade{
+			trades: []Trade{
 				{profit: 100},
 				{profit: 100},
 				{profit: 104},
@@ -76,17 +76,17 @@ func TestCalculate_bestTrade_worstTrade(t *testing.T) {
 
 	testCases := []struct {
 		name        string
-		trades      []trade
+		trades      []Trade
 		bestProfit  int
 		worstProfit int
 	}{
 		{name: "nil", trades: nil, bestProfit: 0, worstProfit: 0},
-		{name: "empty", trades: []trade{}, bestProfit: 0, worstProfit: 0},
-		{name: "one trade", trades: []trade{{profit: 10}}, bestProfit: 10, worstProfit: 10},
-		{name: "simple trades", trades: []trade{{profit: -10}, {profit: 20}, {profit: 30}}, bestProfit: 30, worstProfit: -10},
-		{name: "all trades are equal", trades: []trade{{profit: 10}, {profit: 10}, {profit: 10}}, bestProfit: 10, worstProfit: 10},
-		{name: "all are in plus", trades: []trade{{profit: 10}, {profit: 20}, {profit: 30}}, bestProfit: 30, worstProfit: 10},
-		{name: "all are in minus", trades: []trade{{profit: -10}, {profit: -20}, {profit: -30}}, bestProfit: -10, worstProfit: -30},
+		{name: "empty", trades: []Trade{}, bestProfit: 0, worstProfit: 0},
+		{name: "one Trade", trades: []Trade{{profit: 10}}, bestProfit: 10, worstProfit: 10},
+		{name: "simple trades", trades: []Trade{{profit: -10}, {profit: 20}, {profit: 30}}, bestProfit: 30, worstProfit: -10},
+		{name: "all trades are equal", trades: []Trade{{profit: 10}, {profit: 10}, {profit: 10}}, bestProfit: 10, worstProfit: 10},
+		{name: "all are in plus", trades: []Trade{{profit: 10}, {profit: 20}, {profit: 30}}, bestProfit: 30, worstProfit: 10},
+		{name: "all are in minus", trades: []Trade{{profit: -10}, {profit: -20}, {profit: -30}}, bestProfit: -10, worstProfit: -30},
 	}
 
 	for _, tc := range testCases {
@@ -94,11 +94,11 @@ func TestCalculate_bestTrade_worstTrade(t *testing.T) {
 			summary := calculate(tc.trades)
 
 			if summary.BestTrade.profit != tc.bestProfit {
-				t.Errorf("Expected best trade to be %v, got %v", tc.bestProfit, summary.BestTrade.profit)
+				t.Errorf("Expected best Trade to be %v, got %v", tc.bestProfit, summary.BestTrade.profit)
 			}
 
 			if summary.WorstTrade.profit != tc.worstProfit {
-				t.Errorf("Expected worst trade to be %v, got %v", tc.worstProfit, summary.WorstTrade.profit)
+				t.Errorf("Expected worst Trade to be %v, got %v", tc.worstProfit, summary.WorstTrade.profit)
 			}
 		})
 	}
@@ -108,10 +108,10 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		trades   []trade
+		trades   []Trade
 		expected Summary
 	}{
-		{name: "one pair with three trades", trades: []trade{
+		{name: "one pair with three trades", trades: []Trade{
 			{symbol: "EURUSD", profit: 10},
 			{symbol: "EURUSD", profit: 20},
 			{symbol: "EURUSD", profit: 30},
@@ -122,7 +122,7 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 				},
 			},
 		},
-		{name: "two pairs with three trades", trades: []trade{
+		{name: "two pairs with three trades", trades: []Trade{
 			{symbol: "EURUSD", profit: 10}, {symbol: "EURUSD", profit: 20}, {symbol: "EURUSD", profit: 30},
 			{symbol: "EURGBP", profit: 10}, {symbol: "EURGBP", profit: 20}, {symbol: "EURGBP", profit: 30},
 		},
@@ -153,21 +153,21 @@ func TestCalculate_stats_by_symbol(t *testing.T) {
 func Test_winLossRatio(t *testing.T) {
 	testCases := []struct {
 		name          string
-		trades        []trade
+		trades        []Trade
 		expectedRatio float64
 	}{
 		{name: "nil", trades: nil, expectedRatio: 0},
-		{name: "empty", trades: []trade{}, expectedRatio: 0},
-		{name: "one win trade", trades: []trade{{simplifiedResult: win}}, expectedRatio: 1},
-		{name: "one loss trade", trades: []trade{{simplifiedResult: loss}}, expectedRatio: 0},
-		{name: "one breakeven trade", trades: []trade{{simplifiedResult: breakEven}}, expectedRatio: 0},
-		{name: "one win and one loss trade", trades: []trade{{simplifiedResult: win}, {simplifiedResult: loss}}, expectedRatio: 0.5},
-		{name: "one win and one loss and one breakeven trade", trades: []trade{{simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: breakEven}}, expectedRatio: 0.5},
-		{name: "two win and one loss trade", trades: []trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}}, expectedRatio: 0.67},
-		{name: "two win and one loss and one breakeven trade", trades: []trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: breakEven}}, expectedRatio: 0.67},
-		{name: "two win and two loss trade", trades: []trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: loss}}, expectedRatio: 0.5},
-		{name: "two win and two loss and one breakeven trade", trades: []trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: loss}, {simplifiedResult: breakEven}}, expectedRatio: 0.5},
-		{name: "one win and two loss trade", trades: []trade{{simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: loss}}, expectedRatio: 0.33},
+		{name: "empty", trades: []Trade{}, expectedRatio: 0},
+		{name: "one win Trade", trades: []Trade{{simplifiedResult: win}}, expectedRatio: 1},
+		{name: "one loss Trade", trades: []Trade{{simplifiedResult: loss}}, expectedRatio: 0},
+		{name: "one breakeven Trade", trades: []Trade{{simplifiedResult: breakEven}}, expectedRatio: 0},
+		{name: "one win and one loss Trade", trades: []Trade{{simplifiedResult: win}, {simplifiedResult: loss}}, expectedRatio: 0.5},
+		{name: "one win and one loss and one breakeven Trade", trades: []Trade{{simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: breakEven}}, expectedRatio: 0.5},
+		{name: "two win and one loss Trade", trades: []Trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}}, expectedRatio: 0.67},
+		{name: "two win and one loss and one breakeven Trade", trades: []Trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: breakEven}}, expectedRatio: 0.67},
+		{name: "two win and two loss Trade", trades: []Trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: loss}}, expectedRatio: 0.5},
+		{name: "two win and two loss and one breakeven Trade", trades: []Trade{{simplifiedResult: win}, {simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: loss}, {simplifiedResult: breakEven}}, expectedRatio: 0.5},
+		{name: "one win and two loss Trade", trades: []Trade{{simplifiedResult: win}, {simplifiedResult: loss}, {simplifiedResult: loss}}, expectedRatio: 0.33},
 	}
 
 	for _, tc := range testCases {

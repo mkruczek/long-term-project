@@ -7,7 +7,14 @@ type Service struct {
 	getTrades getTrades
 }
 
-func (s *Service) Calculate(ctx context.Context, f Filter) (Summary, error) {
+// New - create new Service
+func New(gt getTrades) Service {
+	return Service{
+		getTrades: gt,
+	}
+}
+
+func (s Service) Calculate(ctx context.Context, f Filter) (Summary, error) {
 
 	trades, err := s.getTrades.GetTrades(ctx, f)
 	if err != nil {

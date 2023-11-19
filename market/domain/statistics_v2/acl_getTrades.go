@@ -6,11 +6,18 @@ import (
 	"market/market/libs/mongo"
 )
 
-type tradesRepository struct {
-	db mongo.Provider
+// tradesRepository - i my mind this is  something which cane query the database and return the model of the domain
+// todo? do i need import the Trade package model here?
+// todo! fix dependency after introducing database for statistics
+type TradesProvider struct {
+	db *mongo.Provider
 }
 
-func (r *tradesRepository) GetTrades(ctx context.Context, filter Filter) ([]trade, error) {
+func NewTradesProvider(db *mongo.Provider) *TradesProvider {
+	return &TradesProvider{db: db}
+}
+
+func (r *TradesProvider) GetTrades(ctx context.Context, filter Filter) ([]Trade, error) {
 	var domainTrades []aclTrade.Trade
 	var err error
 	if filter.Symbol == "" {
@@ -26,10 +33,10 @@ func (r *tradesRepository) GetTrades(ctx context.Context, filter Filter) ([]trad
 	return domainToTrade(domainTrades), nil
 }
 
-func domainToTrade(domainTrades []aclTrade.Trade) []trade {
-	trades := make([]trade, len(domainTrades))
+func domainToTrade(domainTrades []aclTrade.Trade) []Trade {
+	trades := make([]Trade, len(domainTrades))
 	for i, t := range domainTrades {
-		trades[i] = trade{
+		trades[i] = Trade{
 			id:               t.ID,
 			symbol:           t.Symbol,
 			tradeSide:        tradeSide(t.TradeSide),

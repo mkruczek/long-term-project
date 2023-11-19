@@ -24,8 +24,9 @@ const (
 	breakEven
 )
 
-// trade - internal representation of a trade, for now entirely base on domain.Trade
-type trade struct {
+// todo - this struct is public, for me this TechDebt, as long as i don't introduce database for statistics
+// Trade - internal representation of a Trade, for now entirely base on domain.Trade
+type Trade struct {
 	id               string
 	symbol           string
 	tradeSide        tradeSide
