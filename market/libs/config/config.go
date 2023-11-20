@@ -4,13 +4,13 @@ package config
 
 /* MarketApiServer */
 
-func GetMarket() Market {
-	return Market{
+func GetTrade() Application {
+	return Application{
 		Http: Http{
 			Port:    "8090",
-			URLPath: "/api/market",
+			URLPath: "/api/trade",
 		},
-		Mongo: Mongo{
+		DataBase: Mongo{
 			DBName:   "market",
 			Host:     "172.200.0.10",
 			Port:     "27017",
@@ -20,9 +20,25 @@ func GetMarket() Market {
 	}
 }
 
-type Market struct {
-	Http  Http
-	Mongo Mongo
+func GetStatistic() Application {
+	return Application{
+		Http: Http{
+			Port:    "8092",
+			URLPath: "/api/statistic",
+		},
+		DataBase: Mongo{
+			DBName:   "market",
+			Host:     "172.200.0.10",
+			Port:     "27017",
+			User:     "root",
+			Password: "secret",
+		},
+	}
+}
+
+type Application struct {
+	Http     Http
+	DataBase Mongo
 }
 
 type Http struct {

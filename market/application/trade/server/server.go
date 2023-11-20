@@ -16,14 +16,14 @@ type Server struct {
 
 func New(services appServices) *Server {
 	return &Server{
-		Server:   baseServer.New(config.GetMarket().Http.URLPath, config.GetMarket().Http.Port),
+		Server:   baseServer.New(config.GetTrade().Http.URLPath, config.GetTrade().Http.Port),
 		services: services,
 	}
 }
 
 func (svr *Server) Init(ctx context.Context) {
 
-	db, err := mongo.New(ctx, config.GetMarket().Mongo.DBName, config.GetMarket().Mongo.Host, config.GetMarket().Mongo.Port, config.GetMarket().Mongo.User, config.GetMarket().Mongo.Password)
+	db, err := mongo.New(ctx, config.GetTrade().DataBase.DBName, config.GetTrade().DataBase.Host, config.GetTrade().DataBase.Port, config.GetTrade().DataBase.User, config.GetTrade().DataBase.Password)
 	if err != nil {
 		log.Fatalf(ctx, "can`t connect to mongo: %s", err)
 	}

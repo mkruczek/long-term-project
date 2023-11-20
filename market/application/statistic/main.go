@@ -15,7 +15,7 @@ func main() {
 	mainCtx := context.Background()
 	log.Init("info")
 
-	mgoCfg := config.GetMarket().Mongo
+	mgoCfg := config.GetTrade().DataBase
 	mongoDB, err := mongo.New(mainCtx, mgoCfg.DBName, mgoCfg.Host, mgoCfg.Port, mgoCfg.User, mgoCfg.Password)
 	if err != nil {
 		log.Fatalf(mainCtx, "can`t create mongo provider: %s", err)
