@@ -13,9 +13,9 @@ import (
 func main() {
 
 	mainCtx := context.Background()
-	log.Init("info")
+	log.Init(config.GetStatistic().LogLevel)
 
-	mgoCfg := config.GetTrade().DataBase
+	mgoCfg := config.GetStatistic().DataBase
 	mongoDB, err := mongo.New(mainCtx, mgoCfg.DBName, mgoCfg.Host, mgoCfg.Port, mgoCfg.User, mgoCfg.Password)
 	if err != nil {
 		log.Fatalf(mainCtx, "can`t create mongo provider: %s", err)

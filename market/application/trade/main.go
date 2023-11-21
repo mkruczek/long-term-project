@@ -13,7 +13,7 @@ import (
 func main() {
 
 	mainCtx := context.Background()
-	log.Init("info")
+	log.Init(config.GetTrade().LogLevel)
 
 	mgoCfg := config.GetTrade().DataBase
 	mongoDB, err := mongo.New(mainCtx, mgoCfg.DBName, mgoCfg.Host, mgoCfg.Port, mgoCfg.User, mgoCfg.Password)

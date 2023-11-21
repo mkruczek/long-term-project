@@ -17,6 +17,7 @@ func GetTrade() Application {
 			User:     "root",
 			Password: "secret",
 		},
+		LogLevel: "info",
 	}
 }
 
@@ -33,12 +34,14 @@ func GetStatistic() Application {
 			User:     "root",
 			Password: "secret",
 		},
+		LogLevel: "debug",
 	}
 }
 
 type Application struct {
 	Http     Http
 	DataBase Mongo
+	LogLevel string
 }
 
 type Http struct {
