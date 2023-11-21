@@ -1,7 +1,6 @@
 module market
 
-go 1.21.1
-
+go 1.21.4
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/gocarina/gocsv v0.0.0-20230616125104-99d496ca653d
