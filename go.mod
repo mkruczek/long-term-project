@@ -4,11 +4,11 @@ go 1.21.4
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/gocarina/gocsv v0.0.0-20230616125104-99d496ca653d
-	github.com/google/go-cmp v0.5.9
+	github.com/gocarina/gocsv v0.0.0-20231116093920-b87c2d0e983a
+	github.com/google/go-cmp v0.6.0
 	github.com/jinzhu/copier v0.4.0
 	github.com/sirupsen/logrus v1.9.3
-	go.mongodb.org/mongo-driver v1.12.1
+	go.mongodb.org/mongo-driver v1.13.0
 )
 
 require (
