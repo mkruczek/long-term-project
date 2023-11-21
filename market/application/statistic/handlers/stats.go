@@ -41,18 +41,6 @@ func Stats(sg useCase.StatisticGetter) gin.HandlerFunc {
 			Symbol:    sq.Symbol,
 		}
 
-		//trades, err := sg.GetTrades.GetTrades(ctx, filter)
-		//if err != nil {
-		//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		//	return
-		//}
-
-		////todo!
-		//// remove after introducing new statistics microservice
-		//for _, t := range trades {
-		//	t.CalculateSimplifiedResult()
-		//}
-
 		sts, err := sg.Statistics.Calculate(ctx, filter)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
