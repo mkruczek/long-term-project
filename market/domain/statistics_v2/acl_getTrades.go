@@ -37,15 +37,15 @@ func domainToTrade(domainTrades []aclTrade.Trade) []Trade {
 	trades := make([]Trade, len(domainTrades))
 	for i, t := range domainTrades {
 		trades[i] = Trade{
-			id:               t.ID,
-			symbol:           t.Symbol,
-			tradeSide:        tradeSide(t.TradeSide),
-			openPrice:        t.OpenPrice,
-			openTime:         t.OpenTime,
-			closePrice:       t.ClosePrice,
-			closeTime:        t.CloseTime,
-			profit:           t.Profit,
-			simplifiedResult: calculateSimplifiedResult(t.Profit),
+			Id:               t.ID,
+			Symbol:           t.Symbol,
+			TradeSide:        tradeSide(t.TradeSide),
+			OpenPrice:        t.OpenPrice,
+			OpenTime:         t.OpenTime,
+			ClosePrice:       t.ClosePrice,
+			CloseTime:        t.CloseTime,
+			Profit:           t.Profit,
+			SimplifiedResult: calculateSimplifiedResult(t.Profit),
 		}
 	}
 	return trades

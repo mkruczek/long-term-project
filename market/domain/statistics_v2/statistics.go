@@ -53,7 +53,7 @@ func profit(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary) {
 	defer wg.Done()
 	var result int
 	for _, t := range trades {
-		result += t.profit
+		result += t.Profit
 	}
 	resultChan <- Summary{Profit: result}
 	slog.Debug("end calculating profit")
@@ -63,11 +63,11 @@ func bestTrade(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating best Trade")
 	defer wg.Done()
 	best := Trade{
-		profit: math.MinInt64,
+		Profit: math.MinInt64,
 	}
 
 	for _, trade := range trades {
-		if trade.profit > best.profit {
+		if trade.Profit > best.Profit {
 			best = trade
 		}
 	}
@@ -79,10 +79,10 @@ func worstTrade(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary) {
 	slog.Debug("start calculating worst Trade")
 	defer wg.Done()
 	worst := Trade{
-		profit: math.MaxInt64,
+		Profit: math.MaxInt64,
 	}
 	for _, trade := range trades {
-		if trade.profit < worst.profit {
+		if trade.Profit < worst.Profit {
 			worst = trade
 		}
 	}
@@ -96,7 +96,7 @@ func calculateBySymbol(wg *sync.WaitGroup, allTrades []Trade, resultChan chan<- 
 
 	tradesBySymbol := make(map[string][]Trade, len(allTrades))
 	for _, t := range allTrades {
-		tradesBySymbol[t.symbol] = append(tradesBySymbol[t.symbol], t)
+		tradesBySymbol[t.Symbol] = append(tradesBySymbol[t.Symbol], t)
 	}
 
 	innerWg := &sync.WaitGroup{}
@@ -115,7 +115,7 @@ func calculateBySymbol(wg *sync.WaitGroup, allTrades []Trade, resultChan chan<- 
 
 			var profit int
 			for _, t := range trades {
-				profit += t.profit
+				profit += t.Profit
 			}
 
 			innerChan <- innerSummary{symbol: symbol, bySymbol: BySymbol{Profit: profit, AverageProfit: int(math.Round(float64(profit) / float64(len(trades)))), Amount: len(trades), PercentOfAll: int(math.Round(float64(len(trades)) / float64(allTrades) * 100))}}
@@ -138,7 +138,7 @@ func winLossRatio(wg *sync.WaitGroup, trades []Trade, resultChan chan<- Summary)
 	defer wg.Done()
 	var w, l, breakeven float64
 	for _, t := range trades {
-		switch t.simplifiedResult {
+		switch t.SimplifiedResult {
 		case win:
 			w++
 		case loss:
